@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+Bundler.require
+
+require File.expand_path('../../lib/authy', __FILE__)
+
+Pry.start(TOPLEVEL_BINDING)
+
