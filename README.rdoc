@@ -1,9 +1,25 @@
-= authy
+= Authy
 
-Description goes here.
+Ruby library to access the Authy API
+
+== Usage
+
+require 'authy'
+
+Authy.api_key = 'your-api-key'
+Authy.api_uri = 'http://test-authy-api.heroku.com/'
+Authy::API.register_user(:user => {:email => 'your@email.com'})
+Authy::API.verify(:id => 'your-device-id', :otp => 'current-otp')
+
+Available calls:
+
+  #register_user
+  #moving_factor
+  #register_device
+  #verify
 
 == Contributing to authy
- 
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
 * Fork the project.
