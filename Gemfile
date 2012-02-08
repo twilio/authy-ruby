@@ -1,6 +1,7 @@
 source "http://rubygems.org"
 
-gem 'typhoeus'
+gem 'typhoeus', '0.3.3'
+gem 'pry'
 
 group :development do
   gem "rspec", "~> 2.8.0"
@@ -10,5 +11,4 @@ group :development do
   gem "jeweler", "~> 1.8.3"
   gem "simplecov", ">= 0"
   gem "reek", "~> 1.2.8"
-  gem 'pry'
 end

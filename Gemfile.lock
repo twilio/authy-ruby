@@ -58,5 +58,5 @@ DEPENDENCIES
   reek (~> 1.2.8)
   rspec (~> 2.8.0)
   simplecov
-  typhoeus
+  typhoeus (= 0.3.3)
   yard (~> 0.7)
