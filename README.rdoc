@@ -15,7 +15,6 @@ Available calls:
 
     #register_user
     #moving_factor
-    #register_device
     #verify
 
 == Contributing to authy

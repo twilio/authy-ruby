@@ -15,9 +15,6 @@ module Authy
     # Authy::API.moving_factor
     define_remote_method :moving_factor, :path => '/json/moving_factor/show'
 
-    # Authy::API.verify(:confirmation_code => '')
-    define_remote_method :register_device, :path  => '/json/device/register/:confirmation_code'
-
     # Authy::API.verify(:id => '', :otp => '')
     define_remote_method :verify, :path => '/:id/verify/:otp'
 
