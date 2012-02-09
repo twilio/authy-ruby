@@ -53,7 +53,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.0.0)
   jeweler (~> 1.8.3)
-  pry
+  pry (= 0.9.8.1)
   rdoc (~> 3.12)
   reek (~> 1.2.8)
   rspec (~> 2.8.0)

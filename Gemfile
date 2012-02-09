@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
 gem 'typhoeus', '0.3.3'
-gem 'pry'
+gem 'pry', '0.9.8.1'
 
 group :development do
   gem "rspec", "~> 2.8.0"
