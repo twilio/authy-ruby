@@ -12,7 +12,7 @@ module Authy
 
         raw_method = :"raw_#{name}"
 
-        req_params = opts[:required]
+        req_params = opts[:required] || []
         remote_method = @remote_methods[name]
 
         instance_eval do
