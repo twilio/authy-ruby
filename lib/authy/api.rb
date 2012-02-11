@@ -8,8 +8,8 @@ module Authy
     include Typhoeus
     include Authy::RemoteMethod
 
-    remote_defaults :on_success => lambda {|response| JSON.parse(response.body) rescue response.body },
-                    :on_failure => lambda {|response| JSON.parse(response.body) rescue response.body },
+    remote_defaults :on_success => lambda {|response| Authy::Response.new(response) },
+                    :on_failure => lambda {|response| Authy::Response.new(response) },
                     :base_uri   => ENV['AUTHY_URL'] || 'http://api.authy.com'
 
     # Authy::API.moving_factor
