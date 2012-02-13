@@ -9,7 +9,7 @@ Ruby library to access the Authy API
     Authy.api_key = 'your-api-key'
     Authy.api_uri = 'http://test-authy-api.heroku.com/'
     Authy::API.register_user(:user => {:email => 'your@email.com'})
-    Authy::API.verify(:id => 'your-device-id', :otp => 'current-otp')
+    Authy::API.verify(:id => 'your-device-id', :token => 'current-token')
 
 Available calls:
 

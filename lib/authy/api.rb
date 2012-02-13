@@ -15,8 +15,8 @@ module Authy
     # Authy::API.moving_factor
     define_remote_method :moving_factor, :path => '/json/moving_factor/show'
 
-    # Authy::API.verify(:id => '', :otp => '')
-    define_remote_method :verify, :path => '/protected/json/verify/:otp/:id'
+    # Authy::API.verify(:id => '', :token => '')
+    define_remote_method :verify, :path => '/protected/json/verify/:token/:id'
 
     # Authy::API.register_user(:user => {:email => 'foo@bar.com'})
     define_remote_method :register_user, :path => "/protected/json/users/new",
