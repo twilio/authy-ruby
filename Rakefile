@@ -47,3 +47,10 @@ task :default => :spec
 
 require 'yard'
 YARD::Rake::YardocTask.new
+
+task :simplecov do
+  require 'simplecov'
+  ENV['COVERAGE'] = "true"
+  Rake::Task['spec'].execute
+end
+

@@ -19,7 +19,7 @@ module Authy
     end
 
     def error_msg
-      @raw_response.curl_error_message == "No error" ? self.body : @raw_response.curl_error_message
+      (@raw_response.curl_error_message == "No error" && self.empty?) ? self.body : @raw_response.curl_error_message
     end
 
     private
