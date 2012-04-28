@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authy"
-  s.version = "0.0.2"
+  s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Authy", "David A. Cuadrado"]
-  s.date = "2012-02-11"
+  s.date = "2012-04-28"
   s.description = "Ruby library to access Authy services"
   s.email = "krawek@gmail.com"
   s.executables = ["authy-api-console"]
@@ -31,15 +31,17 @@ Gem::Specification.new do |s|
     "lib/authy.rb",
     "lib/authy/api.rb",
     "lib/authy/config.rb",
+    "lib/authy/models/user.rb",
     "lib/authy/remote_method.rb",
     "lib/authy/response.rb",
-    "spec/authy_spec.rb",
+    "spec/authy/api_spec.rb",
+    "spec/authy/response_spec.rb",
     "spec/spec_helper.rb"
   ]
   s.homepage = "http://github.com/authy/authy"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.10"
+  s.rubygems_version = "1.8.11"
   s.summary = "Ruby library to access Authy services"
 
   if s.respond_to? :specification_version then
@@ -51,7 +53,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_development_dependency(%q<yard>, ["~> 0.7"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
+      s.add_development_dependency(%q<bundler>, ["~> 1.1.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.3"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
       s.add_development_dependency(%q<reek>, ["~> 1.2.8"])
@@ -61,7 +63,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_dependency(%q<yard>, ["~> 0.7"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+      s.add_dependency(%q<bundler>, ["~> 1.1.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.8.3"])
       s.add_dependency(%q<simplecov>, [">= 0"])
       s.add_dependency(%q<reek>, ["~> 1.2.8"])
@@ -72,7 +74,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rspec>, ["~> 2.8.0"])
     s.add_dependency(%q<yard>, ["~> 0.7"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
-    s.add_dependency(%q<bundler>, ["~> 1.0.0"])
+    s.add_dependency(%q<bundler>, ["~> 1.1.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.8.3"])
     s.add_dependency(%q<simplecov>, [">= 0"])
     s.add_dependency(%q<reek>, ["~> 1.2.8"])

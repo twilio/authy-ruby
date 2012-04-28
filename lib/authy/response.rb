@@ -6,6 +6,10 @@ module Authy
       parse_body
     end
 
+    def id
+      self["id"]
+    end
+
     def ok?
       @raw_response.code == 200
     end
@@ -22,7 +26,15 @@ module Authy
       (@raw_response.curl_error_message == "No error" && self.empty?) ? self.body : @raw_response.curl_error_message
     end
 
-    private
+    protected
+    def method_missing(name, *args, &block)
+      if self.include?(name.to_s)
+        self[name.to_s]
+      else
+        super(name, *args, &block)
+      end
+    end
+
     def parse_body
       begin
         body = JSON.parse(@raw_response.body)

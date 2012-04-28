@@ -21,6 +21,7 @@ module Authy
     # Authy::API.register_user(:user => {:email => 'foo@bar.com'})
     define_remote_method :register_user, :path => "/protected/json/users/new",
                                          :method => :post,
-                                         :required => [:user]
+                                         :required => [:user],
+                                         :on_success => lambda {|response| Authy::User.new(response)  }
   end
 end

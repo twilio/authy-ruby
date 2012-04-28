@@ -14,14 +14,15 @@ describe "Authy::API" do
     user = Authy::API.register_user(:user => {:email => generate_email})
     user.should be_kind_of(Authy::Response)
 
-    user['user'].should_not be_nil
-    user['user']['id'].should_not be_nil
-    user['user']['id'].should be_kind_of(Integer)
+    user.should be_kind_of(Authy::User)
+    user.should_not be_nil
+    user.id.should_not be_nil
+    user.id.should be_kind_of(Integer)
   end
 
   it "should validate a given token" do
     user = Authy::API.register_user(:user => {:email => generate_email})
-    response = Authy::API.verify(:token => 'invalid_token', :id => user['user']['id'])
+    response = Authy::API.verify(:token => 'invalid_token', :id => user['id'])
 
     response.should be_kind_of(Authy::Response)
     response.ok?.should be_false
