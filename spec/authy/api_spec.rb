@@ -1,17 +1,8 @@
 require 'spec_helper'
 
 describe "Authy::API" do
-  it "should get a valid moving factor" do
-    mf = Authy::API.moving_factor
-    mf.should be_kind_of(Authy::Response)
-
-    mf['moving_factor'].should_not be_nil
-    mf['moving_factor'].should be_kind_of(String)
-    mf['moving_factor'].length.should == 9
-  end
-
   it "should find or create a user" do
-    user = Authy::API.register_user(:user => {:email => generate_email})
+    user = Authy::API.register_user(:email => generate_email, :cellphone => generate_cellphone, :country_code => 1)
     user.should be_kind_of(Authy::Response)
 
     user.should be_kind_of(Authy::User)
@@ -21,11 +12,18 @@ describe "Authy::API" do
   end
 
   it "should validate a given token" do
-    user = Authy::API.register_user(:user => {:email => generate_email})
+    user = Authy::API.register_user(:email => generate_email, :cellphone => generate_cellphone, :country_code => 1)
     response = Authy::API.verify(:token => 'invalid_token', :id => user['id'])
 
     response.should be_kind_of(Authy::Response)
-    response.ok?.should be_false
-    response.body.should == 'invalid token'
+    response.ok?.should be_true
+    response.body.should == 'valid token'
+  end
+
+  it "should return the error messages as a hash" do
+    user = Authy::API.register_user(:email => generate_email, :cellphone => "abc-1234", :country_code => 1)
+
+    user.errors.should be_kind_of(Hash)
+    user.errors['cellphone'].should == ['must be a valid cellphone number.']
   end
 end

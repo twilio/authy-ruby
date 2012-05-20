@@ -26,4 +26,9 @@ RSpec.configure do |config|
     user = (0...8).map{97.+(rand(25)).chr}.join
     user + domain
   end
+
+  def generate_cellphone
+    n = rand(999) + 1000
+    "305-967-#{n}"
+  end
 end
