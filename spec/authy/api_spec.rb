@@ -26,4 +26,12 @@ describe "Authy::API" do
     user.errors.should be_kind_of(Hash)
     user.errors['cellphone'].should == ['must be a valid cellphone number.']
   end
+
+  it "should request a SMS token" do
+    user = Authy::API.register_user(:email => generate_email, :cellphone => generate_cellphone, :country_code => 1)
+    user.should be_ok
+
+    response = Authy::API.request_sms(:id => user.id)
+    response.should be_ok
+  end
 end

@@ -10,7 +10,7 @@ Ruby library to access the Authy API
     Authy.api_uri = 'https://api.authy.com/'
 
 
-### Registering a user 
+### Registering a user
 
 `Authy::API.register_user` requires the user e-mail address and cellphone. Optionally you can pass in the country_code or we will asume
 USA. The call will return you the authy id for the user that you need to store in your database.
@@ -31,12 +31,25 @@ Assuming you have a `users` database with a `authy_id` field in the `users` data
 `Authy::API.verify` takes the authy_id that you are verifying and the token that you want to verify. You should have the authy_id in your database
 
     response = Authy::API.verify(:id => user.authy_id, :token => 'token-user-entered')
-	
-	if response.ok?
-		//token was valid, user can sign in
-	else
-		//token is invalid
-		
+
+    if response.ok?
+      //token was valid, user can sign in
+    else
+      //token is invalid
+
+
+### Requesting a SMS token
+
+`Authy::API.request_sms` takes the authy_id that you want to send a SMS token. This requires Authy SMS plugin to be enabled.
+
+    response = Authy::API.request_sms(:id => user.authy_id)
+
+    if response.ok?
+      //sms was sent
+    else
+      response.
+      //sms failed to send
+
 
 
 ## Contributing to authy

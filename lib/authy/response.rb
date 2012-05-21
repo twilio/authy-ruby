@@ -26,6 +26,10 @@ module Authy
       (@raw_response.curl_error_message == "No error" && self.empty?) ? self.body : @raw_response.curl_error_message
     end
 
+    def errors
+      self['errors'] || {}
+    end
+
     protected
     def method_missing(name, *args, &block)
       if self.include?(name.to_s)
