@@ -11,7 +11,7 @@ module Authy
     def api_uri=(uri)
       @api_uri = uri
     end
-    alias :api_url= :api_key=
+    alias :api_url= :api_uri=
 
     def api_uri
       @api_uri || "https://api.authy.com"

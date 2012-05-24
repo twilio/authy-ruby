@@ -23,7 +23,8 @@ module Authy
     def self.verify(attributes)
       token = attributes[:token] || attributes['token']
       user_id = attributes[:id] || attributes['id']
-      response = Typhoeus::Request.get("#{Authy.api_uri}/protected/json/verify/#{token}/#{user_id}", :params => {:api_key => Authy.api_key})
+
+      response = Typhoeus::Request.get("#{Authy.api_uri}/protected/json/verify/#{escape_for_url(token)}/#{escape_for_url(user_id)}", :params => {:api_key => Authy.api_key})
 
       Authy::Response.new(response)
     end
@@ -33,9 +34,14 @@ module Authy
     def self.request_sms(attributes)
       user_id = attributes[:id] || attributes['id']
 
-      response = Typhoeus::Request.get("#{Authy.api_uri}/protected/json/sms/#{user_id}", :params => {:api_key => Authy.api_key})
+      response = Typhoeus::Request.get("#{Authy.api_uri}/protected/json/sms/#{escape_for_url(user_id)}", :params => {:api_key => Authy.api_key})
 
       Authy::Response.new(response)
+    end
+
+    private
+    def self.escape_for_url(field)
+      URI.escape(field.to_s.strip, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
     end
   end
 end
