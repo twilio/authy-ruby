@@ -20,6 +20,15 @@ describe "Authy::API" do
     response.body.should == 'valid token'
   end
 
+  it "should fail to validate a given token when force=true is given" do
+    user = Authy::API.register_user(:email => generate_email, :cellphone => generate_cellphone, :country_code => 1)
+    response = Authy::API.verify(:token => 'invalid_token', :id => user['id'], :force => true)
+
+    response.should be_kind_of(Authy::Response)
+    response.ok?.should be_false
+    response.body.should == 'invalid token'
+  end
+
   it "should return the error messages as a hash" do
     user = Authy::API.register_user(:email => generate_email, :cellphone => "abc-1234", :country_code => 1)
 
