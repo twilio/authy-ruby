@@ -3,6 +3,7 @@ module Authy
     attr_reader :raw_response
     def initialize(response)
       @raw_response = response
+      @errors = {}
       parse_body
     end
 
@@ -27,7 +28,7 @@ module Authy
     end
 
     def errors
-      self['errors'] || {}
+      self['errors'] || @errors
     end
 
     protected
