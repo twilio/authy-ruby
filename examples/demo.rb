@@ -43,6 +43,7 @@ choose do |menu|
         break
       end
 
+      # register user on authy. email, country code and cellphone are mandatory
       authy_user = Authy::API.register_user(:email => email, :country_code => country_code, :cellphone => cellphone)
       if authy_user.ok?
         puts "User was registered. its authy id is #{authy_user.id}"
@@ -59,7 +60,13 @@ choose do |menu|
     token = ask("token: ")
 
     user = User.where(:email => email).first
-    otp = Authy::API.verify(:id => user.authy_id, :token => token)
+    if !user
+      puts "User is not registered yet"
+      return
+    end
+
+    # verify if the given token is correct. `force` makes it validate the code even if the user has not confirmed its account
+    otp = Authy::API.verify(:id => user.authy_id, :token => token, :force => true)
 
     if otp.ok?
       puts "Welcome back!"
@@ -72,6 +79,13 @@ choose do |menu|
     email = ask("email: ")
 
     user = User.where(:email => email).first
+    if !user
+      puts "User is not registered yet"
+      return
+    end
+
+    # send sms to the user. `force` makes it send the sms even if the user uses a smartphone
+    # this api call will return an error if the account doesn't have the SMS addon enabled
     response = Authy::API.request_sms(:id => user.authy_id, :force => true)
 
     if response.ok?
