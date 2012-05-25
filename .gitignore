@@ -49,3 +49,5 @@ tmtags
 #*.rbc
 
 *.kdev4
+
+examples/db
