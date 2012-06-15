@@ -33,6 +33,7 @@ module Authy
 
     # options:
     # :id user id
+    # :force force sms
     def self.request_sms(params)
       user_id = params.delete(:id) || params.delete('id')
 

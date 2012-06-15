@@ -26,7 +26,11 @@ module Authy
             self[k] = v
           end
         else
-          @errors = body
+          if body.has_key?('errors')
+            @errors = body['errors']
+          else
+            @errors = body
+          end
         end
       rescue Exception => e
       end

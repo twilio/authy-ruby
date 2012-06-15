@@ -17,7 +17,7 @@ describe "Authy::API" do
 
     response.should be_kind_of(Authy::Response)
     response.ok?.should be_true
-    response.body.should == 'valid token'
+    response['token'].should == 'is valid'
   end
 
   it "should fail to validate a given token when force=true is given" do
@@ -26,14 +26,14 @@ describe "Authy::API" do
 
     response.should be_kind_of(Authy::Response)
     response.ok?.should be_false
-    response.body.should == 'invalid token'
+    response.errors['token'].should == 'is invalid'
   end
 
   it "should return the error messages as a hash" do
     user = Authy::API.register_user(:email => generate_email, :cellphone => "abc-1234", :country_code => 1)
 
     user.errors.should be_kind_of(Hash)
-    user.errors['cellphone'].should == ['must be a valid cellphone number.']
+    user.errors['cellphone'].should == 'must be a valid cellphone number.'
   end
 
   it "should request a SMS token" do
