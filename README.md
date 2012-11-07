@@ -12,6 +12,10 @@ Ruby library to access the Authy API
 
 ## Registering a user
 
+__NOTE: User is matched based on cellphone and country code not e-mail.
+A cellphone is uniquely associated with an authy_id.__  
+
+
 `Authy::API.register_user` requires the user e-mail address and cellphone. Optionally you can pass in the country_code or we will asume
 USA. The call will return you the authy id for the user that you need to store in your database.
 
