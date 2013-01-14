@@ -7,12 +7,14 @@ module Authy
     include Typhoeus
 
     def self.register_user(attributes)
-      user_data = {
+      api_key = attributes.delete(:api_key)
+      params = {
         :user => attributes,
-        :api_key => Authy.api_key
+        :api_key => api_key || Authy.api_key
       }
 
-      response = Typhoeus::Request.post("#{Authy.api_uri}/protected/json/users/new", :params => user_data)
+      url = "#{Authy.api_uri}/protected/json/users/new"
+      response = Typhoeus::Request.post(url, :params => params)
 
       Authy::User.new(response)
     end
@@ -26,7 +28,8 @@ module Authy
       token = params.delete(:token) || params.delete('token')
       user_id = params.delete(:id) || params.delete('id')
 
-      response = Typhoeus::Request.get("#{Authy.api_uri}/protected/json/verify/#{escape_for_url(token)}/#{escape_for_url(user_id)}", :params => params.merge({:api_key => Authy.api_key}))
+      url = "#{Authy.api_uri}/protected/json/verify/#{escape_for_url(token)}/#{escape_for_url(user_id)}"
+      response = Typhoeus::Request.get(url, :params => {:api_key => Authy.api_key}.merge(params))
 
       Authy::Response.new(response)
     end
@@ -37,7 +40,8 @@ module Authy
     def self.request_sms(params)
       user_id = params.delete(:id) || params.delete('id')
 
-      response = Typhoeus::Request.get("#{Authy.api_uri}/protected/json/sms/#{escape_for_url(user_id)}", :params => params.merge({:api_key => Authy.api_key}))
+      url = "#{Authy.api_uri}/protected/json/sms/#{escape_for_url(user_id)}"
+      response = Typhoeus::Request.get(url, :params => {:api_key => Authy.api_key}.merge(params))
 
       Authy::Response.new(response)
     end
