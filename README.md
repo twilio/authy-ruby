@@ -42,9 +42,10 @@ __NOTE: Token verification is only enforced if the user has completed registrati
     response = Authy::API.verify(:id => user.authy_id, :token => 'token-user-entered')
 
     if response.ok?
-      //token was valid, user can sign in
+      # token was valid, user can sign in
     else
-      //token is invalid
+      # token is invalid
+    end
 
 ### Forcing Verification
 
@@ -59,10 +60,11 @@ If you wish to verify tokens even if the user has not yet complete registration,
     response = Authy::API.request_sms(:id => user.authy_id)
 
     if response.ok?
-      //sms was sent
+      # sms was sent
     else
-      response.
-      //sms failed to send
+      response.errors
+      #sms failed to send
+    end
 
 
 This call will be ignored if the user is using the Authy Mobile App. If you still want to send

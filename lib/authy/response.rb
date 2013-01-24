@@ -12,23 +12,30 @@ module Authy
     end
 
     def ok?
-      @raw_response.code == 200
+      @raw_response.status == 200
     end
+    alias :success? :ok?
 
     def body
       @raw_response.body
     end
 
     def code
-      @raw_response.code
+      @raw_response.status
     end
 
     def error_msg
-      (@raw_response.curl_error_message == "No error" && self.empty?) ? self.body : @raw_response.curl_error_message
+      if ok?
+        "No error"
+      elsif self.empty?
+        self.body
+      else
+        self["message"] || "No error"
+      end
     end
 
     def errors
-      self['errors'] || @errors
+      self["errors"] || @errors
     end
 
     protected
@@ -41,12 +48,9 @@ module Authy
     end
 
     def parse_body
-      begin
-        body = JSON.parse(@raw_response.body)
-        body.each do |k,v|
-          self[k] = v
-        end
-      rescue Exception => e
+      body = JSON.parse(@raw_response.body) rescue {}
+      body.each do |k,v|
+        self[k] = v
       end
     end
   end
