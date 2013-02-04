@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authy"
-  s.version = "0.1.0"
+  s.version = "1.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Authy", "David A. Cuadrado"]
-  s.date = "2013-01-24"
+  s.date = "2013-02-04"
   s.description = "Ruby library to access Authy services"
   s.email = "krawek@gmail.com"
   s.executables = ["authy-api-console"]
