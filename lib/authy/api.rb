@@ -30,6 +30,7 @@ module Authy
     def self.verify(params)
       token = params.delete(:token) || params.delete('token')
       user_id = params.delete(:id) || params.delete('id')
+      params[:force] = true if params[:force].nil? && params['force'].nil?
 
       url = "#{Authy.api_uri}/protected/json/verify/#{escape_for_url(token)}/#{escape_for_url(user_id)}"
       response = http_client.get(url, {:api_key => Authy.api_key}.merge(params))

@@ -11,8 +11,8 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
   config.before(:suite) do
-    Authy.api_uri = 'http://localhost:4567'
-    Authy.api_key = 'testing_ruby_api_key'
+    Authy.api_uri = 'http://sandbox-api.authy.com'
+    Authy.api_key = 'bf12974d70818a08199d17d5e2bae630'
   end
 
   config.before(:each) do
