@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authy"
-  s.version = "1.1.0"
+  s.version = "2.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Authy", "David A. Cuadrado"]
-  s.date = "2013-02-04"
+  s.date = "2013-04-09"
   s.description = "Ruby library to access Authy services"
   s.email = "krawek@gmail.com"
   s.executables = ["authy-api-console"]
@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
     "lib/authy.rb",
     "lib/authy/api.rb",
     "lib/authy/config.rb",
+    "lib/authy/core_ext.rb",
     "lib/authy/models/user.rb",
     "lib/authy/response.rb",
     "spec/authy/api_spec.rb",
@@ -57,7 +58,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<simplecov>, [">= 0"])
       s.add_development_dependency(%q<reek>, [">= 0"])
     else
-      s.add_dependency(%q<httpclient>, [">= 0"])
+      s.add_dependency(%q<httpclient>, [">= 2.2.6"])
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<pry>, [">= 0"])
       s.add_dependency(%q<yard>, [">= 0"])
@@ -67,7 +68,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<reek>, [">= 0"])
     end
   else
-    s.add_dependency(%q<httpclient>, [">= 0"])
+    s.add_dependency(%q<httpclient>, [">= 2.2.6"])
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<pry>, [">= 0"])
     s.add_dependency(%q<yard>, [">= 0"])
