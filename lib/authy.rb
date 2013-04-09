@@ -4,6 +4,7 @@ require 'httpclient'
 require 'httpclient/include_client'
 require 'json'
 
+require 'authy/core_ext'
 require 'authy/response'
 require 'authy/models/user'
 require 'authy/config'

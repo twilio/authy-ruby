@@ -54,32 +54,6 @@ module Authy
     def self.escape_for_url(field)
       URI.escape(field.to_s.strip, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
     end
-
-
-    def Hash.try_convert(value)
-      return value if value.instance_of?(Hash)
-      return nil if !value.respond_to?(:to_ary)
-      converted = value.to_ary
-      return converted if converted.instance_of?(Hash)
-
-      cname = value.class.name
-      raise TypeError, "can't convert %s to %s (%s#%s gives %s)" %
-        [cname, Hash.name, cname, :to_ary, converted.class.name]
-    end unless Hash.respond_to?(:try_convert)
-   
-
-
-    def Array.try_convert(value)
-      return value if value.instance_of?(Array)
-      return nil if !value.respond_to?(:to_ary)
-      converted = value.to_ary
-      return converted if converted.instance_of?(Array)
-
-      cname = value.class.name
-      raise TypeError, "can't convert %s to %s (%s#%s gives %s)" %
-        [cname, Array.name, cname, :to_ary, converted.class.name]
-    end unless Array.respond_to?(:try_convert)
-    
     
     # Copied and extended from httpclient's HTTP::Message#escape_query()
     def self.escape_query(query, namespace = nil) # :nodoc:
