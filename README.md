@@ -83,10 +83,10 @@ the SMS pass force=true as an option
 
 ## Requesting token via a phone call
 
-`Authy::API.request_phonecall` takes the authy_id that you want to deliver the token by a phone call. This requires Authy Calls addon, please contact us to support@authy.com to enable this addon.
+`Authy::API.request_phone_call` takes the authy_id that you want to deliver the token by a phone call. This requires Authy Calls addon, please contact us to support@authy.com to enable this addon.
 
 ```ruby
-    response = Authy::API.request_phonecall(:id => user.authy_id)
+    response = Authy::API.request_phone_call(:id => user.authy_id)
 
     if response.ok?
       # call was done
@@ -99,7 +99,7 @@ the SMS pass force=true as an option
 This call will be ignored if the user is using the Authy Mobile App. If you ensure that user receives the phone call, you must pass force=true as an option
 
 ```ruby
-    response = Authy::API.request_phonecall(:id => user.authy_id, :force => true)
+    response = Authy::API.request_phone_call(:id => user.authy_id, :force => true)
 ```
 
 ## Deleting users

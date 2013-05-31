@@ -52,8 +52,8 @@ module Authy
 
     # options:
     # :id user id
-    # :force force phonecall
-    def self.request_phonecall(params)
+    # :force force phone_call
+    def self.request_phone_call(params)
       user_id = params.delete(:id) || params.delete('id')
 
       url = "#{Authy.api_uri}/protected/json/call/#{escape_for_url(user_id)}"

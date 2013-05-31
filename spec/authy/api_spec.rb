@@ -59,7 +59,7 @@ describe "Authy::API" do
     end
   end
 
-  ["sms", "phonecall"].each do |kind|
+  ["sms", "phone_call"].each do |kind|
     title = kind.upcase
     describe "Requesting #{title}" do
       before do
@@ -68,7 +68,7 @@ describe "Authy::API" do
       end
 
       it "should request a #{title} token" do
-        uri_param = kind == "phonecall" ? "call" : kind
+        uri_param = kind == "phone_call" ? "call" : kind
         url = "#{Authy.api_uri}/protected/json/#{uri_param}/#{Authy::API.escape_for_url(@user.id)}"
         HTTPClient.any_instance.should_receive(:request).with(:get, url, {:query=>{:api_key=> Authy.api_key}, :header=>nil, :follow_redirect=>nil}) { mock(:ok? => true, :body => "", :status => 200) }
         response = Authy::API.send("request_#{kind}", :id => @user.id)
