@@ -81,13 +81,37 @@ describe "Authy::API" do
         response.errors['message'].should =~ /invalid api key/i
       end
 
-      context "user doesn't exist"
+      context "user doesn't exist" do
+        it "should not be ok" do
+          response = Authy::API.send("request_#{kind}", :id => "tony")
+          response.errors['message'].should == "User doesn't exist."
+          response.should_not be_ok
+        end
+      end
+
+    end
+  end
+
+  describe "delete users" do
+    context "user doesn't exist" do
       it "should not be ok" do
-        response = Authy::API.send("request_#{kind}", :id => "tony")
+        response = Authy::API.delete_user(:id => "tony")
         response.errors['message'].should == "User doesn't exist."
         response.should_not be_ok
       end
     end
 
+    context "user exists" do
+      before do
+        @user = Authy::API.register_user(:email => generate_email, :cellphone => generate_cellphone, :country_code => 1)
+        @user.should be_ok
+      end
+
+      it "should be ok" do
+        response = Authy::API.delete_user(:id => @user.id)
+        response.message.should == "User was added to remove."
+        response.should be_ok
+      end
+    end
   end
 end

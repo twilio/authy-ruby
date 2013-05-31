@@ -62,6 +62,17 @@ module Authy
       Authy::Response.new(response)
     end
 
+    # options:
+    # :id user id
+    def self.delete_user(params)
+      user_id = params.delete(:id) || params.delete('id')
+
+      url = "#{Authy.api_uri}/protected/json/users/delete/#{escape_for_url(user_id)}"
+      response = http_client.post(url, {:api_key => Authy.api_key}.merge(params))
+
+      Authy::Response.new(response)
+    end
+
     private
     def self.escape_for_url(field)
       URI.escape(field.to_s.strip, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
