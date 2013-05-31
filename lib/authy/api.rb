@@ -50,11 +50,23 @@ module Authy
       Authy::Response.new(response)
     end
 
+    # options:
+    # :id user id
+    # :force force phonecall
+    def self.request_phonecall(params)
+      user_id = params.delete(:id) || params.delete('id')
+
+      url = "#{Authy.api_uri}/protected/json/call/#{escape_for_url(user_id)}"
+      response = http_client.get(url, {:api_key => Authy.api_key}.merge(params))
+
+      Authy::Response.new(response)
+    end
+
     private
     def self.escape_for_url(field)
       URI.escape(field.to_s.strip, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
     end
-    
+
     # Copied and extended from httpclient's HTTP::Message#escape_query()
     def self.escape_query(query, namespace = nil) # :nodoc:
       pairs = []
