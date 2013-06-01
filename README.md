@@ -1,4 +1,4 @@
-# Authy
+# Authy [![Build Status](https://travis-ci.org/authy/authy-ruby.png?branch=api-updates)](https://travis-ci.org/authy/authy-ruby)
 
 Ruby library to access the Authy API
 
