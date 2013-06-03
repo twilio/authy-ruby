@@ -1,4 +1,4 @@
-# Authy [![Build Status](https://travis-ci.org/authy/authy-ruby.png?branch=api-updates)](https://travis-ci.org/authy/authy-ruby) [![Code Climate](https://codeclimate.com/github/authy/authy-ruby.png)](https://codeclimate.com/github/authy/authy-ruby)
+# Authy [![Build Status](https://travis-ci.org/authy/authy-ruby.png?branch=master)](https://travis-ci.org/authy/authy-ruby) [![Code Climate](https://codeclimate.com/github/authy/authy-ruby.png)](https://codeclimate.com/github/authy/authy-ruby)
 
 Ruby library to access the Authy API
 
