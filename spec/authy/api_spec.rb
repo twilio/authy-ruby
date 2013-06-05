@@ -33,6 +33,7 @@ describe "Authy::API" do
       user.should_not be_ok
       user.errors['message'].should =~ /invalid api key/i
     end
+
   end
 
   describe "verificating tokens" do
