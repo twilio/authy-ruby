@@ -5,12 +5,24 @@ module Authy
     end
 
     module ClassMethods
+      def keys_to_verify(uri, params)
+        uri.scan(/:(\w+)/).flatten
+      end
 
-      def validate_for_url(names, to_validate = [])
-        to_validate.each_with_index do |value, index|
+      def clean_uri_params(uri_params, params)
+        params.reject { |k, v| uri_params.include? k}
+      end
+
+      def eval_uri(uri, params = {})
+        uri.gsub(/:\w+/) {|s| params[s.gsub(":", "")]}
+      end
+
+      def validate_for_url(names, to_validate = {})
+        names.each do |name|
+          value = to_validate[name]
           if value.nil? or value.to_s.empty? or value.to_s.split(" ").size == 0
-            puts "#{names[index]} param is blank."
-            return [ false, "#{names[index]} is blank." ]
+            puts "#{name} param is blank."
+            return [ false, "#{name} is blank." ]
           end
         end
         [ true, ""]

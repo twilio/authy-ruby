@@ -35,7 +35,9 @@ module Authy
       user_id = params.delete(:id) || params.delete('id')
       params[:force] = true if params[:force].nil? && params['force'].nil?
 
-      get_request("protected/json/verify", ["token", "user_id"], [token, user_id], params)
+      get_request("protected/json/verify/:token/:user_id", params.merge({
+                                                                          "token" => token,
+                                                                          "user_id" => user_id}))
     end
 
     # options:
@@ -44,7 +46,7 @@ module Authy
     def self.request_sms(params)
       user_id = params.delete(:id) || params.delete('id')
 
-      get_request("protected/json/sms", ["user_id"], [user_id], params)
+      get_request("protected/json/sms/:user_id", params.merge({"user_id" => user_id}))
     end
 
     # options:
@@ -53,7 +55,7 @@ module Authy
     def self.request_phone_call(params)
       user_id = params.delete(:id) || params.delete('id')
 
-      get_request("protected/json/call", ["user_id"], [user_id], params)
+      get_request("protected/json/call/:user_id", params.merge({"user_id" => user_id}))
     end
 
     # options:
@@ -61,15 +63,18 @@ module Authy
     def self.delete_user(params)
       user_id = params.delete(:id) || params.delete('id')
 
-      post_request("protected/json/users/delete", ["user_id"], [user_id], params)
+      post_request("protected/json/users/delete/:user_id", params.merge({"user_id" =>user_id}))
     end
 
     private
-    def self.post_request(uri, uri_params_name, uri_params, params)
-      state, error = validate_for_url(uri_params_name, uri_params)
+
+    def self.post_request(uri, params = {})
+      uri_params = keys_to_verify(uri, params)
+      state, error = validate_for_url(uri_params, params)
+
       response = if state
-                   uri_escaped_params = uri_params.map { |p| escape_for_url(p)}.join("/")
-                   url = "#{Authy.api_uri}/#{uri}/#{uri_escaped_params}"
+                   url = "#{Authy.api_uri}/#{eval_uri(uri, params)}"
+                   params = clean_uri_params(uri_params, params)
                    http_client.post(url, :body => escape_query({:api_key => Authy.api_key}.merge(params)))
                  else
                    build_error_response(error)
@@ -77,11 +82,12 @@ module Authy
       Authy::Response.new(response)
     end
 
-    def self.get_request(uri, uri_params_name = [], uri_params = [], params = {})
-      state, error = validate_for_url(uri_params_name, uri_params)
+    def self.get_request(uri, params = {})
+      uri_params = keys_to_verify(uri, params)
+      state, error = validate_for_url(uri_params, params)
       response = if state
-                   uri_escaped_params = uri_params.map { |p| escape_for_url(p)}.join("/")
-                   url = "#{Authy.api_uri}/#{uri}/#{uri_escaped_params}"
+                   url = "#{Authy.api_uri}/#{eval_uri(uri, params)}"
+                   params = clean_uri_params(uri_params, params)
                    http_client.get(url, {:api_key => Authy.api_key}.merge(params))
                  else
                    build_error_response(error)
