@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "authy"
-  s.version = "2.1.0"
+  s.version = "2.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Authy", "David A. Cuadrado"]
-  s.date = "2013-06-03"
+  s.date = "2013-06-17"
   s.description = "Ruby library to access Authy services"
   s.email = "krawek@gmail.com"
   s.executables = ["authy-api-console"]
@@ -35,8 +35,10 @@ Gem::Specification.new do |s|
     "lib/authy/core_ext.rb",
     "lib/authy/models/user.rb",
     "lib/authy/response.rb",
+    "lib/authy/url_helpers.rb",
     "spec/authy/api_spec.rb",
     "spec/authy/response_spec.rb",
+    "spec/authy/url_helpers_spec.rb",
     "spec/spec_helper.rb"
   ]
   s.homepage = "http://github.com/authy/authy"
