@@ -33,6 +33,7 @@ describe "Authy::API" do
       user.should_not be_ok
       user.errors['message'].should =~ /invalid api key/i
     end
+
   end
 
   describe "verificating tokens" do
@@ -112,6 +113,27 @@ describe "Authy::API" do
         response.message.should == "User was added to remove."
         response.should be_ok
       end
+    end
+  end
+
+  describe "blank params" do
+    before do
+      @user = Authy::API.register_user(:email => generate_email, :cellphone => generate_cellphone, :country_code => 1)
+      @user.should be_ok
+    end
+
+    [:request_sms, :request_phone_call, :delete_user].each do |method|
+      it "should return a proper response with the errors for #{method}" do
+        response = Authy::API.send(method, :id => nil)
+        response.should_not be_ok
+        response.message.should == "user_id is blank."
+      end
+    end
+
+    it "should return a prope response with the errors for verify" do
+      response = Authy::API.verify({})
+      response.should_not be_ok
+      response.message.should == "token is blank."
     end
   end
 end
