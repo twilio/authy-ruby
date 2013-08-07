@@ -21,13 +21,12 @@ module Authy
         names.each do |name|
           value = to_validate[name]
           if value.nil? or value.to_s.empty? or value.to_s.split(" ").size == 0
-            puts "#{name} param is blank."
             return [ false, "#{name} is blank." ]
           end
         end
         [ true, ""]
       end
-      
+
       def escape_for_url(field)
         URI.escape(field.to_s.strip, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
       end
