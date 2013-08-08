@@ -10,4 +10,4 @@ require 'authy/response'
 require 'authy/models/user'
 require 'authy/config'
 require 'authy/api'
-
+require 'authy/version'

@@ -14,7 +14,7 @@ Ruby library to access the Authy API
 ## Registering a user
 
 __NOTE: User is matched based on cellphone and country code not e-mail.
-A cellphone is uniquely associated with an authy_id.__  
+A cellphone is uniquely associated with an authy_id.__
 
 
 `Authy::API.register_user` requires the user e-mail address and cellphone. Optionally you can pass in the country_code or we will asume
@@ -35,8 +35,8 @@ Assuming you have a `users` database with a `authy_id` field in the `users` data
 ## Verifying a user
 
 
-__NOTE: Token verification is only enforced if the user has completed registration. To change this behaviour see Forcing Verification section below.__  
-   
+__NOTE: Token verification is only enforced if the user has completed registration. To change this behaviour see Forcing Verification section below.__
+
    >*Registration is completed once the user installs and registers the Authy mobile app or logins once successfully using SMS.*
 
 `Authy::API.verify` takes the authy_id that you are verifying and the token that you want to verify. You should have the authy_id in your database
@@ -50,7 +50,7 @@ __NOTE: Token verification is only enforced if the user has completed registrati
       # token is invalid
     end
 ```
-    
+
 ### Forcing Verification
 
 If you wish to verify tokens even if the user has not yet complete registration, pass force=true when verifying the token.
@@ -58,7 +58,7 @@ If you wish to verify tokens even if the user has not yet complete registration,
 ```ruby
     response = Authy::API.verify(:id => user.authy_id, :token => 'token-user-entered', :force => true)
 ```
-    
+
 ## Requesting a SMS token
 
 `Authy::API.request_sms` takes the authy_id that you want to send a SMS token. This requires Authy SMS plugin to be enabled.
@@ -128,7 +128,7 @@ This call will be ignored if the user is using the Authy Mobile App. If you ensu
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
 
 Copyright
-== 
+==
 
-Copyright (c) 2012 Authy Inc. See LICENSE.txt for
+Copyright (c) 2012-2013 Authy Inc. See LICENSE.txt for
 further details.
