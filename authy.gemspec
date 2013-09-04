@@ -6,8 +6,8 @@ require 'authy/version'
 Gem::Specification.new do |s|
   s.name        = "authy"
   s.version     = Authy::VERSION
-  s.authors     = ["Authy", "David A. Cuadrado"]
-  s.email       = ["krawek@gmail.com"]
+  s.authors     = ["Authy Inc"]
+  s.email       = ["support@authy.com"]
   s.homepage    = "https://github.com/authy/authy"
   s.summary     = %q{Ruby library to access Authy services}
   s.description = %q{Ruby library to access Authy services}
