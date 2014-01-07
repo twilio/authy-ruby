@@ -130,5 +130,5 @@ This call will be ignored if the user is using the Authy Mobile App. If you ensu
 Copyright
 ==
 
-Copyright (c) 2012-2013 Authy Inc. See LICENSE.txt for
+Copyright (c) 2012-2014 Authy Inc. See LICENSE.txt for
 further details.
