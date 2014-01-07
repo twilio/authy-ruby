@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.version     = Authy::VERSION
   s.authors     = ["Authy Inc"]
   s.email       = ["support@authy.com"]
-  s.homepage    = "https://github.com/authy/authy"
+  s.homepage    = "https://github.com/authy/authy-ruby"
   s.summary     = %q{Ruby library to access Authy services}
   s.description = %q{Ruby library to access Authy services}
   s.license = 'MIT'
