@@ -14,7 +14,10 @@ module Authy
       end
 
       def eval_uri(uri, params = {})
-        uri.gsub(/:\w+/) {|s| params[s.gsub(":", "")]}
+        uri.gsub(/:\w+/) do |s|
+          param_name = s.gsub(":", "")
+          HTTP::Message.escape(params[param_name].to_s)
+        end
       end
 
       def validate_for_url(names, to_validate = {})
@@ -45,6 +48,16 @@ module Authy
             escape_query(value, left+"[]")
           else
             to_param(left + '[]', value)
+          end
+        end
+      end
+
+      def escape_params(params)
+        params.each do |attr, value|
+          if value.kind_of?(String)
+            params[attr] = HTTP::Message.escape(value)
+          elsif value.kind_of?(Hash)
+            escape_params(value)
           end
         end
       end

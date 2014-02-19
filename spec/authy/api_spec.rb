@@ -58,6 +58,19 @@ describe "Authy::API" do
       response.should_not be_ok
       response.errors['message'].should =~ /invalid api key/i
     end
+
+    it "should escape the params" do
+      expect {
+        Authy::API.verify(:token => '[=#%@$&#(!@);.,', :id => @user['id'])
+      }.to_not raise_error
+    end
+
+    it "should fail if a param is missing" do
+      response = Authy::API.verify(:id => @user['id'])
+      response.should be_kind_of(Authy::Response)
+      response.should_not be_ok
+      response["message"] =~ /token is blank/
+    end
   end
 
   ["sms", "phone_call"].each do |kind|
