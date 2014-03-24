@@ -131,6 +131,29 @@ describe "Authy::API" do
     end
   end
 
+  describe "user status" do
+    context "user doesn't exist" do
+      it "should not be ok" do
+        response = Authy::API.user_status(:id => "tony")
+        response.errors["message"].should == "User not found."
+        response.should_not be_ok
+      end
+    end
+
+    context "user exists" do
+      before do
+        @user = Authy::API.register_user(:email => generate_email, :cellphone => generate_cellphone, :country_code => 1)
+        @user.should be_ok
+      end
+
+      it "should be ok" do
+        response = Authy::API.user_status(:id => @user.id)
+        response.status.should be_kind_of(Hash)
+        response.should be_ok
+      end
+    end
+  end
+
   describe "blank params" do
     before do
       @user = Authy::API.register_user(:email => generate_email, :cellphone => generate_cellphone, :country_code => 1)

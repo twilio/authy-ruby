@@ -66,6 +66,11 @@ module Authy
       post_request("protected/json/users/delete/:user_id", params.merge({"user_id" =>user_id}))
     end
 
+    def self.user_status(params)
+      user_id = params.delete(:id) || params.delete("id")
+      get_request("protected/json/users/:user_id/status", params.merge({"user_id" => user_id}))
+    end
+
     private
 
     def self.post_request(uri, params = {})
