@@ -21,7 +21,7 @@ describe "Authy::API" do
                                       :country_code => 1)
 
       user.errors.should be_kind_of(Hash)
-      user.errors['cellphone'].should == 'must be a valid cellphone number.'
+      user.errors['cellphone'].should == 'is invalid'
     end
 
     it "should allow to override the API key" do
@@ -38,18 +38,20 @@ describe "Authy::API" do
 
   describe "verificating tokens" do
     before do
-      @user = Authy::API.register_user(:email => generate_email,
-                                       :cellphone => generate_cellphone,
+      @email = generate_email
+      @cellphone = generate_cellphone
+      @user = Authy::API.register_user(:email => @email,
+                                       :cellphone => @cellphone,
                                        :country_code => 1)
       @user.should be_ok
     end
 
     it "should fail to validate a given token if the user is not registered" do
-      response = Authy::API.verify(:token => 'invalid_token', :id => @user['id'])
+      response = Authy::API.verify(:token => 'invalid_token', :id => @user.id)
 
       response.should be_kind_of(Authy::Response)
       response.ok?.should be_false
-      response.errors['message'].should == 'token is invalid'
+      response.errors['message'].should == 'Token is invalid.'
     end
 
     it "should allow to override the API key" do
@@ -98,7 +100,7 @@ describe "Authy::API" do
       context "user doesn't exist" do
         it "should not be ok" do
           response = Authy::API.send("request_#{kind}", :id => "tony")
-          response.errors['message'].should == "User doesn't exist."
+          response.errors['message'].should == "User not found."
           response.should_not be_ok
         end
       end
@@ -110,7 +112,7 @@ describe "Authy::API" do
     context "user doesn't exist" do
       it "should not be ok" do
         response = Authy::API.delete_user(:id => "tony")
-        response.errors['message'].should == "User doesn't exist."
+        response.errors['message'].should == "User not found."
         response.should_not be_ok
       end
     end
