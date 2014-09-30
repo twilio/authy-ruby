@@ -117,6 +117,21 @@ This call will be ignored if the user is using the Authy Mobile App. If you ensu
     end
 ```
 
+## User status
+
+`Authy::API.user_status` takes the authy_id of the user that you want to get the status from your app.
+
+```ruby
+    response = Authy::API.user_status(:id => user.authy_id)
+
+    if response.ok?
+      # do something with user status
+    else
+      response.errors
+      # the user doesn't exist
+    end
+```
+
 ### Contributing to authy
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
