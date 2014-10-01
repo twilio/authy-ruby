@@ -50,7 +50,7 @@ describe "Authy::API" do
       response = Authy::API.verify(:token => 'invalid_token', :id => @user.id)
 
       response.should be_kind_of(Authy::Response)
-      response.ok?.should be_false
+      response.ok?.should be_falsy
       response.errors['message'].should == 'Token is invalid.'
     end
 
