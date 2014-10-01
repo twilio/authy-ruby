@@ -14,11 +14,11 @@ describe "Authy::Response" do
   end
 
   it "should be ok if the return code is 200" do
-    @response.ok?.should be_true
+    @response.ok?.should be true
 
     @fake_response.status = 401
     @response = Authy::Response.new(@fake_response)
-    @response.ok?.should be_false
+    @response.ok?.should be false
   end
 
   it "should return the error message" do
