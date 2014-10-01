@@ -36,8 +36,10 @@ module Authy
       params[:force] = true if params[:force].nil? && params['force'].nil?
 
       get_request("protected/json/verify/:token/:user_id", params.merge({
-                                                                          "token" => token,
-                                                                          "user_id" => user_id}))
+          "token" => token,
+          "user_id" => user_id
+        })
+      )
     end
 
     # options:

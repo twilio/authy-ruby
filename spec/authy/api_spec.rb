@@ -4,9 +4,11 @@ describe "Authy::API" do
   describe "Registering users" do
 
     it "should find or create a user" do
-      user = Authy::API.register_user(:email => generate_email,
-                                      :cellphone => generate_cellphone,
-                                      :country_code => 1)
+      user = Authy::API.register_user(
+        :email => generate_email,
+        :cellphone => generate_cellphone,
+        :country_code => 1
+      )
       user.should be_kind_of(Authy::Response)
 
       user.should be_kind_of(Authy::User)
@@ -16,19 +18,23 @@ describe "Authy::API" do
     end
 
     it "should return the error messages as a hash" do
-      user = Authy::API.register_user(:email => generate_email,
-                                      :cellphone => "abc-1234",
-                                      :country_code => 1)
+      user = Authy::API.register_user(
+        :email => generate_email,
+        :cellphone => "abc-1234",
+        :country_code => 1
+      )
 
       user.errors.should be_kind_of(Hash)
       user.errors['cellphone'].should == 'is invalid'
     end
 
     it "should allow to override the API key" do
-      user = Authy::API.register_user(:email => generate_email,
-                                      :cellphone => generate_cellphone,
-                                      :country_code => 1,
-                                      :api_key => "invalid_api_key")
+      user = Authy::API.register_user(
+        :email => generate_email,
+        :cellphone => generate_cellphone,
+        :country_code => 1,
+        :api_key => "invalid_api_key"
+      )
 
       user.should_not be_ok
       user.errors['message'].should =~ /invalid api key/i
@@ -50,7 +56,7 @@ describe "Authy::API" do
       response = Authy::API.verify(:token => 'invalid_token', :id => @user.id)
 
       response.should be_kind_of(Authy::Response)
-      response.ok?.should be_false
+      response.should_not be_ok
       response.errors['message'].should == 'Token is invalid.'
     end
 
