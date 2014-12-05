@@ -23,7 +23,7 @@ describe "Authy::PhoneIntelligence" do
     #   )
 
     # response.should be_kind_of(Authy::Response)
-    #   response.success.should be_true
+    #   response.success.should be_truthy
     #   response.message.should == "Text message sent to +1 111-111-1111."
     # end
   end
@@ -86,7 +86,7 @@ describe "Authy::PhoneIntelligence" do
       response.message.should =~ /Phone number information as of/
       response.type.should == "voip"
       response.provider.should == "Google Voice"
-      response.ported.should be_false
+      response.ported.should be_falsey
     end
   end
 end
