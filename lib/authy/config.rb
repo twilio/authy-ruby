@@ -5,7 +5,7 @@ module Authy
     end
 
     def api_key
-      @api_key
+      @api_key || ENV["AUTHY_API_KEY"]
     end
 
     def api_uri=(uri)
