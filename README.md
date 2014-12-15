@@ -11,6 +11,8 @@ Ruby library to access the Authy API
     Authy.api_uri = 'https://api.authy.com/'
 ```
 
+Using Ruby on Rails? _Put this in **config/initializers** and create a new file called **authy.rb**._
+
 ## Registering a user
 
 __NOTE: User is matched based on cellphone and country code not e-mail.
