@@ -73,6 +73,12 @@ describe "Authy::API" do
       }.to_not raise_error
     end
 
+    it "should escape the params if have white spaces" do
+      expect {
+        Authy::API.verify(:token => "token with space", :id => @user['id'])
+      }.to_not raise_error
+    end
+
     it "should fail if a param is missing" do
       response = Authy::API.verify(:id => @user['id'])
       response.should be_kind_of(Authy::Response)
@@ -103,6 +109,11 @@ describe "Authy::API" do
         response.errors['message'].should =~ /invalid api key/i
       end
 
+      it "should request a #{title} token using custom actions" do
+        response = Authy::API.send("request_#{kind}", id: @user.id, action: "custom action?", action_message: "Action message $%^?@#")
+        response.should be_ok
+      end
+
       context "user doesn't exist" do
         it "should not be ok" do
           response = Authy::API.send("request_#{kind}", :id => "tony")
@@ -110,7 +121,6 @@ describe "Authy::API" do
           response.should_not be_ok
         end
       end
-
     end
   end
 

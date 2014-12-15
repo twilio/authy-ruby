@@ -95,7 +95,7 @@ module Authy
       response = if state
                    url = "#{Authy.api_uri}/#{eval_uri(uri, params)}"
                    params = clean_uri_params(uri_params, params)
-                   http_client.get(url, escape_params({:api_key => Authy.api_key}.merge(params)))
+                   http_client.get(url, {:api_key => Authy.api_key}.merge(params))
                  else
                    build_error_response(error)
                  end
