@@ -4,7 +4,7 @@ module Authy
   #  Authy.api_uri = 'http://test-authy-api.heroku.com/'
   #
   class API
-    USER_AGENT = "AuthyRuby/#{Authy::VERSION}"
+    USER_AGENT = "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})"
     MIN_TOKEN_SIZE = 6
     MAX_TOKEN_SIZE = 12
 
@@ -33,9 +33,11 @@ module Authy
     #
     def self.verify(params)
       token = params.delete(:token) || params.delete('token')
-      return token_invalid_response unless token_is_safe?(token)
-
       user_id = params.delete(:id) || params.delete('id')
+
+      return invalid_response('Token format is invalid') unless token_is_safe?(token)
+      return invalid_response('User id is invalid') unless is_digit?(user_id)
+
       params[:force] = true if params[:force].nil? && params['force'].nil?
 
       response = get_request("protected/json/verify/:token/:user_id", params.merge({
@@ -122,12 +124,15 @@ module Authy
     end
 
     def self.token_is_safe?(token)
-      return true if token =~ /\A\d{#{MIN_TOKEN_SIZE},#{MAX_TOKEN_SIZE}}\Z/
-      return false
+      !!(/\A\d{#{MIN_TOKEN_SIZE},#{MAX_TOKEN_SIZE}}\Z/.match token)
     end
 
-    def self.token_invalid_response
-      response = build_error_response('Token format is invalid')
+    def self.is_digit?(str)
+      !!(/^\d+$/.match str.to_s)
+    end
+
+    def self.invalid_response(str="Invalid resonse")
+      response = build_error_response(str)
       return Authy::Response.new(response)
     end
 
