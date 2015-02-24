@@ -84,9 +84,6 @@ describe "Authy::PhoneIntelligence" do
 
       response.should be_ok
       response.message.should =~ /Phone number information as of/
-      response.type.should == "voip"
-      response.provider.should == "Google Voice"
-      response.ported.should be_falsey
     end
   end
 end

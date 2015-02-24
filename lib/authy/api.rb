@@ -4,13 +4,14 @@ module Authy
   #  Authy.api_uri = 'http://test-authy-api.heroku.com/'
   #
   class API
-    USER_AGENT = "authy-ruby"
+    USER_AGENT = "AuthyRuby/#{Authy::VERSION}"
+    MIN_TOKEN_SIZE = 6
+    MAX_TOKEN_SIZE = 12
 
     include Authy::URL
 
     extend HTTPClient::IncludeClient
-    include_http_client
-
+    include_http_client(agent_name: USER_AGENT)
 
     def self.register_user(attributes)
       api_key = attributes.delete(:api_key)
@@ -32,14 +33,19 @@ module Authy
     #
     def self.verify(params)
       token = params.delete(:token) || params.delete('token')
+      return token_invalid_response unless token_is_safe?(token)
+
       user_id = params.delete(:id) || params.delete('id')
       params[:force] = true if params[:force].nil? && params['force'].nil?
 
-      get_request("protected/json/verify/:token/:user_id", params.merge({
+      response = get_request("protected/json/verify/:token/:user_id", params.merge({
           "token" => token,
           "user_id" => user_id
         })
       )
+
+      return verify_response(response) if response.ok?
+      return response
     end
 
     # options:
@@ -113,6 +119,22 @@ module Authy
           }
         }.to_json
       })
+    end
+
+    def self.token_is_safe?(token)
+      return true if token =~ /\A\d{#{MIN_TOKEN_SIZE},#{MAX_TOKEN_SIZE}}\Z/
+      return false
+    end
+
+    def self.token_invalid_response
+      response = build_error_response('Token format is invalid')
+      return Authy::Response.new(response)
+    end
+
+    def self.verify_response(response)
+      return response if response['token'] == 'is valid'
+      response = build_error_response('Token is invalid')
+      return Authy::Response.new(response)
     end
   end
 end

@@ -57,11 +57,11 @@ describe "Authy::API" do
 
       response.should be_kind_of(Authy::Response)
       response.ok?.should be_falsey
-      response.errors['message'].should == 'Token is invalid.'
+      response.errors['message'].should == 'Token format is invalid'
     end
 
     it "should allow to override the API key" do
-      response = Authy::API.verify(:token => 'invalid_token', :id => @user['id'], :api_key => "invalid_api_key")
+      response = Authy::API.verify(:token => '123456', :id => @user['id'], :api_key => "invalid_api_key")
 
       response.should_not be_ok
       response.errors['message'].should =~ /invalid api key/i
@@ -83,7 +83,15 @@ describe "Authy::API" do
       response = Authy::API.verify(:id => @user['id'])
       response.should be_kind_of(Authy::Response)
       response.should_not be_ok
-      response["message"] =~ /token is blank/
+      response["message"] =~ /Token format is invalid/
+    end
+
+    it 'fails when token format is invalid' do
+      response = Authy::API.verify(:token => '0000', :id => @user.id)
+
+      expect(response.ok?).to be_falsey
+      response.should be_kind_of(Authy::Response)
+      expect(response.errors['message']).to eq 'Token format is invalid'
     end
   end
 
@@ -186,8 +194,24 @@ describe "Authy::API" do
 
     it "should return a prope response with the errors for verify" do
       response = Authy::API.verify({})
-      response.should_not be_ok
-      response.message.should == "token is blank."
+      expect(response).to_not be_ok
+      expect(response.message).to eq "Token format is invalid"
+    end
+  end
+
+  describe '.token_is_safe?' do
+    it 'checks minimum token size' do
+      expect(Authy::API.send(:token_is_safe?, '1')).to be false
+    end
+
+    it 'checks valid characters' do
+      expect(Authy::API.send(:token_is_safe?, '123456')).to be true
+      expect(Authy::API.send(:token_is_safe?, '123456a')).to be false
+    end
+
+    it 'checks maximum token size' do
+      expect(Authy::API.send(:token_is_safe?, '123456789098')).to be true
+      expect(Authy::API.send(:token_is_safe?, '1234567890987')).to be false
     end
   end
 end
