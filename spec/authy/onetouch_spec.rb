@@ -28,6 +28,33 @@ describe Authy::OneTouch do
       expect(response).to be_kind_of(Authy::Response)
       expect(response).to be_ok
     end
+
+    it 'requires message as mandatory' do
+      response = Authy::OneTouch.send_approval_request(
+        id: @user.id,
+        details: {
+          'Bank account' => '23527922',
+          'Amount' => '10 BTC',
+        },
+        hidden_details: {
+          'IP Address' => '192.168.0.3'
+        }
+      )
+
+      expect(response).to be_kind_of(Authy::Response)
+      expect(response).to_not be_ok
+      expect(response.message).to eq 'message cannot be blank'
+    end
+
+    it 'does not require other fields as mandatory' do
+      response = Authy::OneTouch.send_approval_request(
+        id: @user.id,
+        message: 'Test message'
+      )
+
+      expect(response).to be_kind_of(Authy::Response)
+      expect(response).to be_ok
+    end
   end
 
   describe '.approval_request_status' do
