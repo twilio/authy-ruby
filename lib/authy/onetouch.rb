@@ -10,11 +10,12 @@ module Authy
     #   :hidden_details
     #   :phone_number The persons phone number.
     def self.send_approval_request(params)
-      user_id        = params.delete(:id) || params.delete('id')
-      message        = (params.delete(:message) || params.delete('message')).to_s
-      details        = params.delete(:details) || params.delete('details')
-      hidden_details = params.delete(:hidden_details) || params.delete('hidden_details')
-      logos          = params.delete(:logos) || params.delete('logos')
+      user_id           = params.delete(:id) || params.delete('id')
+      message           = (params.delete(:message) || params.delete('message')).to_s
+      details           = params.delete(:details) || params.delete('details')
+      hidden_details    = params.delete(:hidden_details) || params.delete('hidden_details')
+      logos             = params.delete(:logos) || params.delete('logos')
+      seconds_to_expire = params.delete(:seconds_to_expire) || params.delete('seconds_to_expire')
 
       return invalid_response("message cannot be blank") if message.empty?
       return invalid_response('user id is invalid') unless is_digit?(user_id)
@@ -31,7 +32,8 @@ module Authy
         message: message[0, MAX_STRING_SIZE],
         details: details,
         hidden_details: hidden_details,
-        logos: logos
+        logos: logos,
+        seconds_to_expire: seconds_to_expire
       })
     end
 

@@ -22,7 +22,8 @@ describe Authy::OneTouch do
         },
         hidden_details: {
           'IP Address' => '192.168.0.3'
-        }
+        },
+        seconds_to_expire: 150
       )
 
       expect(response).to be_kind_of(Authy::Response)
