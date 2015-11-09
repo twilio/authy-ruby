@@ -1,22 +1,16 @@
 module Authy
   class PhoneIntelligence < Authy::API
 
-    # options:
-    #   :via (sms|call)
-    #   :country_code Numeric calling country code of the country.
-    #   :phone_number The persons phone number.
+    # @deprecated
     def self.verification_start(params)
-      params[:via] = "sms" unless %w(sms, call).include?(params[:via])
-
-      post_request("protected/json/phones/verification/start", params)
+      warn "[DEPRECATION] `PhoneIntelligence.verification_start` is deprecated.  Please use `PhoneVerification.verification_start` instead."
+      Authy::PhoneVerification.verification_start(params)
     end
 
-    # options:
-    #   :country_code Numeric calling country code of the country.
-    #   :phone_number The persons phone number.
-    #   :verification_code The verification code entered by the user.
+    # @deprecated
     def self.verification_check(params)
-      get_request("protected/json/phones/verification/check", params)
+      warn "[DEPRECATION] `PhoneIntelligence.verification_check` is deprecated.  Please use `PhoneVerification.verification_check` instead."
+      Authy::PhoneVerification.verification_check(params)
     end
 
     # options:

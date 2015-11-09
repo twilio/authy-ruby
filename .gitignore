@@ -54,5 +54,4 @@ examples/db
 .ruby-version
 .ruby-gemset
 .rvmrc
-Gemfile.lock
 
