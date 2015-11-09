@@ -4,7 +4,7 @@ describe "Authy::PhoneVerification" do
   describe "Sending the verification code" do
 
     it "should send the code via SMS" do
-      response = Authy::PhoneVerification.verification_start(
+      response = Authy::PhoneVerification.start(
         :via => "sms",
         :country_code => "1",
         :phone_number => "111-111-1111"
@@ -16,7 +16,7 @@ describe "Authy::PhoneVerification" do
     end
 
     # it "should send the code via CALL" do
-    #   response = Authy::PhoneVerification.verification_start(
+    #   response = Authy::PhoneVerification.start(
     #     :via => "call",
     #     :country_code => "1",
     #     :phone_number => "111-111-1111"
@@ -30,7 +30,7 @@ describe "Authy::PhoneVerification" do
 
   describe "validate the fields required" do
     it "should return an error. Country code is required" do
-      response = Authy::PhoneVerification.verification_start(
+      response = Authy::PhoneVerification.start(
         :via => "sms",
         :phone_number => "111-111-1111"
       )
@@ -40,7 +40,7 @@ describe "Authy::PhoneVerification" do
     end
 
     it "should return an error. Cellphone is invalid" do
-      response = Authy::PhoneVerification.verification_start(
+      response = Authy::PhoneVerification.start(
         :via => "sms",
         :country_code => "1",
         :phone_number => "123"
@@ -53,7 +53,7 @@ describe "Authy::PhoneVerification" do
 
   describe "Check the verification code" do
     it "should return success true if code is correct" do
-      response = Authy::PhoneVerification.verification_check(
+      response = Authy::PhoneVerification.check(
         :country_code => "1",
         :phone_number => "111-111-1111",
         :verification_code => "0000"
@@ -64,7 +64,7 @@ describe "Authy::PhoneVerification" do
     end
 
     it "should return an error if code is incorrect" do
-      response = Authy::PhoneVerification.verification_check(
+      response = Authy::PhoneVerification.check(
         :country_code => "1",
         :phone_number => "111-111-1111",
         :verification_code => "1234"

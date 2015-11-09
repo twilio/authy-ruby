@@ -134,7 +134,32 @@ This call will be ignored if the user is using the Authy Mobile App. If you ensu
     end
 ```
 
-### Contributing to authy
+## Phone Verification
+
+### Starting a phone verification
+
+`Authy::PhoneVerification.start` takes a country code, phone number and a method (sms or call) to deliver the code.
+
+```ruby
+response = Authy::PhoneVerification.start(via: "sms", country_code: 1, phone_number: "111-111-1111")
+if response.ok?
+  # verification was started
+end
+```
+
+### Checking a phone verification
+
+`Authy::PhoneVerification.check` takes a country code, phone number and a verification code.
+
+```ruby
+response = Authy::PhoneVerification.start(verification_code: "1234", country_code: 1, phone_number: "111-111-1111")
+if response.ok?
+  # verification was successful
+end
+```
+
+
+## Contributing to authy
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.

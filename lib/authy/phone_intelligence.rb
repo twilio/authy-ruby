@@ -3,14 +3,14 @@ module Authy
 
     # @deprecated
     def self.verification_start(params)
-      warn "[DEPRECATION] `PhoneIntelligence.verification_start` is deprecated.  Please use `PhoneVerification.verification_start` instead."
-      Authy::PhoneVerification.verification_start(params)
+      warn "[DEPRECATION] `PhoneIntelligence.verification_start` is deprecated.  Please use `PhoneVerification.start` instead."
+      Authy::PhoneVerification.start(params)
     end
 
     # @deprecated
     def self.verification_check(params)
-      warn "[DEPRECATION] `PhoneIntelligence.verification_check` is deprecated.  Please use `PhoneVerification.verification_check` instead."
-      Authy::PhoneVerification.verification_check(params)
+      warn "[DEPRECATION] `PhoneIntelligence.verification_check` is deprecated.  Please use `PhoneVerification.check` instead."
+      Authy::PhoneVerification.check(params)
     end
 
     # options:
