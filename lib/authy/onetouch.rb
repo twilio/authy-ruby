@@ -28,13 +28,13 @@ module Authy
         return invalid_response("Invalid parameters: #{e.message}")
       end
 
-      post_request("onetouch/json/users/#{user_id}/approval_requests", {
-        message: message[0, MAX_STRING_SIZE],
-        details: details,
-        hidden_details: hidden_details,
-        logos: logos,
-        seconds_to_expire: seconds_to_expire
-      })
+      params = { message: message[0, MAX_STRING_SIZE] }
+      params[:details]  = details unless details.empty?
+      params[:hidden_details] = hidden_details unless hidden_details.empty?
+      params[:logos] = logos unless logos.empty?
+      params[:seconds_to_expire] = seconds_to_expire unless seconds_to_expire.empty?
+
+      post_request("onetouch/json/users/#{user_id}/approval_requests", params)
     end
 
     def self.approval_request_status(params)
