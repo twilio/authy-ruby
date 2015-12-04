@@ -172,5 +172,5 @@ end
 Copyright
 ==
 
-Copyright (c) 2012-2016 Authy Inc. See LICENSE.txt for
+Copyright (c) 2011-2020 Authy Inc. See LICENSE.txt for
 further details.
