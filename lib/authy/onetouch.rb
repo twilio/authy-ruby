@@ -17,7 +17,7 @@ module Authy
       logos             = params.delete(:logos) || params.delete('logos')
       seconds_to_expire = params.delete(:seconds_to_expire) || params.delete('seconds_to_expire')
 
-      return invalid_response("message cannot be blank") if message.empty?
+      return invalid_response("message cannot be blank") if message.nil? || message.empty?
       return invalid_response('user id is invalid') unless is_digit?(user_id)
 
       begin
@@ -29,10 +29,10 @@ module Authy
       end
 
       params = { message: message[0, MAX_STRING_SIZE] }
-      params[:details]  = details unless details.empty?
-      params[:hidden_details] = hidden_details unless hidden_details.empty?
-      params[:logos] = logos unless logos.empty?
-      params[:seconds_to_expire] = seconds_to_expire unless seconds_to_expire.empty?
+      params[:details]           = details unless details.nil?
+      params[:hidden_details]    = hidden_details unless hidden_details.nil?
+      params[:logos]             = logos unless logos.nil?
+      params[:seconds_to_expire] = seconds_to_expire unless seconds_to_expire.nil?
 
       post_request("onetouch/json/users/#{user_id}/approval_requests", params)
     end
@@ -64,7 +64,7 @@ module Authy
 
         # We ignore any additional parameter on the logos, and truncate
         # string size to the maximum allowed.
-        { res: res[0, MAX_STRING_SIZE], url: url[0, MAS_STRING_SIZE] }
+        { res: res[0, MAX_STRING_SIZE], url: url[0, MAX_STRING_SIZE] }
       end
     end
   end

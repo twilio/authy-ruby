@@ -56,6 +56,25 @@ describe Authy::OneTouch do
       expect(response).to be_kind_of(Authy::Response)
       expect(response).to be_ok
     end
+
+    it 'checks logos format' do
+      response = Authy::OneTouch.send_approval_request(
+        id: @user.id,
+        message: 'You are moving 10 BTC from your account',
+        details: {
+          'Bank account' => '23527922',
+          'Amount' => '10 BTC',
+        },
+        hidden_details: {
+          'IP Address' => '192.168.0.3'
+        },
+        seconds_to_expire: 150,
+        logos: [{res: 'low', url: 'http://foo.bar'}]
+      )
+
+      expect(response).to be_kind_of(Authy::Response)
+      expect(response).to be_ok
+    end
   end
 
   describe '.approval_request_status' do
