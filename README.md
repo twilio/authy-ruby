@@ -152,7 +152,7 @@ end
 `Authy::PhoneVerification.check` takes a country code, phone number and a verification code.
 
 ```ruby
-response = Authy::PhoneVerification.start(verification_code: "1234", country_code: 1, phone_number: "111-111-1111")
+response = Authy::PhoneVerification.check(verification_code: "1234", country_code: 1, phone_number: "111-111-1111")
 if response.ok?
   # verification was successful
 end
