@@ -11,7 +11,7 @@ module Authy
     include Authy::URL
 
     extend HTTPClient::IncludeClient
-    include_http_client(agent_name: USER_AGENT)
+    include_http_client(:agent_name => USER_AGENT)
 
     def self.register_user(attributes)
       api_key = attributes.delete(:api_key)
