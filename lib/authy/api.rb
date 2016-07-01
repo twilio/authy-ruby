@@ -14,14 +14,14 @@ module Authy
     include_http_client(agent_name: USER_AGENT)
 
     def self.register_user(attributes)
-      api_key = attributes.delete(:api_key)
+      api_key = attributes.delete(:api_key) || Authy.api_key
       params = {
         :user => attributes,
-        :api_key => api_key || Authy.api_key
+        :api_key => api_key
       }
 
       url = "#{Authy.api_uri}/protected/json/users/new"
-      response = http_client.post(url, :body => escape_query(params))
+      response = http_client.post(url, :body => escape_query(params), :header => default_header(api_key: api_key))
 
       Authy::User.new(response)
     end
@@ -90,7 +90,7 @@ module Authy
       response = if state
                    url = "#{Authy.api_uri}/#{eval_uri(uri, params)}"
                    params = clean_uri_params(uri_params, params)
-                   http_client.post(url, :body => escape_query({:api_key => Authy.api_key}.merge(params)))
+                   http_client.post(url, :body => escape_query({:api_key => Authy.api_key}.merge(params)), header: default_header)
                  else
                    build_error_response(error)
                  end
@@ -103,7 +103,7 @@ module Authy
       response = if state
                    url = "#{Authy.api_uri}/#{eval_uri(uri, params)}"
                    params = clean_uri_params(uri_params, params)
-                   http_client.get(url, {:api_key => Authy.api_key}.merge(params))
+                   http_client.get(url, {:api_key => Authy.api_key}.merge(params), default_header)
                  else
                    build_error_response(error)
                  end
@@ -140,6 +140,14 @@ module Authy
       return response if response['token'] == 'is valid'
       response = build_error_response('Token is invalid')
       return Authy::Response.new(response)
+    end
+
+    def self.default_header(api_key: nil)
+      header = {
+        "X-Authy-API-Key" => api_key || Authy.api_key
+      }
+
+      return header
     end
   end
 end
