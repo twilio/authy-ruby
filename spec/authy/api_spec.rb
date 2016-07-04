@@ -40,6 +40,22 @@ describe "Authy::API" do
       user.errors['message'].should =~ /invalid api key/i
     end
 
+    it "should allow overriding send_install_link_via_sms default" do
+      user = Authy::API.register_user(
+        :email => generate_email,
+        :cellphone => generate_cellphone,
+        :country_code => 1,
+        :send_install_link_via_sms => false #default is true. See http://docs.authy.com/totp.html#totp-api
+      )
+
+      user.should be_kind_of(Authy::Response)
+
+      user.should be_kind_of(Authy::User)
+      user.should_not be_nil
+      user.id.should_not be_nil
+      user.id.should be_kind_of(Integer)
+    end
+
   end
 
   describe "verificating tokens" do
