@@ -158,6 +158,38 @@ if response.ok?
 end
 ```
 
+## OneTouch Verification
+
+Another way to provide Two_factor authentication with Authy is by using OneTouch feature. 
+Check the [official docs](http://docs.authy.com/onetouch_getting_started.html)
+
+`Authy::OneTouch.send_approval_request` takes the Authy user ID, a message to fill up the push notification
+body, an optional hash details for the user and another optional hash for hidden details for internal app
+control.
+
+```ruby
+one_touch = Authy::OneTouch.send_approval_request(
+        id: @user.authy_id,
+        message: "Request to Login",
+        details: {
+          'Email Address' => @user.email,
+        },
+        hidden_details: { ip: '1.1.1.1' }
+      )
+```
+
+As soon as the user approves or reject the push notification, Authy will hit a callback endpoint
+(set into Dashboard) updating user's `authy_status` flag. You might have an endpoint in a controller
+such as:
+
+```ruby
+def callback
+    authy_id = params[:authy_id]
+    @user = User.find_by authy_id: authy_id
+    @user.update(authy_status: params[:status])
+  end
+```
+
 
 ## Contributing to authy
 
