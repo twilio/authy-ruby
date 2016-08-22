@@ -28,7 +28,7 @@ module Authy
         return invalid_response("Invalid parameters: #{e.message}")
       end
 
-      params = { message: message[0, MAX_STRING_SIZE] }
+      params = { :message => message[0, MAX_STRING_SIZE] }
       params[:details]           = details unless details.nil?
       params[:hidden_details]    = hidden_details unless hidden_details.nil?
       params[:logos]             = logos unless logos.nil?
@@ -64,7 +64,7 @@ module Authy
 
         # We ignore any additional parameter on the logos, and truncate
         # string size to the maximum allowed.
-        { res: res[0, MAX_STRING_SIZE], url: url[0, MAX_STRING_SIZE] }
+        { :res => res[0, MAX_STRING_SIZE], :url => url[0, MAX_STRING_SIZE] }
       end
     end
   end
