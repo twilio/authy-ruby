@@ -33,12 +33,14 @@ module Authy
         self["message"] || "No error"
       end
     end
+    alias :message :error_msg
 
     def errors
       self["errors"] || @errors
     end
 
     protected
+
     def method_missing(name, *args, &block)
       if self.include?(name.to_s)
         self[name.to_s]
