@@ -15,12 +15,6 @@ RSpec.configure do |config|
     Authy.api_key = 'bf12974d70818a08199d17d5e2bae630'
   end
 
-  config.before(:each) do
-  end
-
-  config.after(:each) do
-  end
-
   def generate_email
     domain = "@authy.com"
     user = (0...8).map{97.+(rand(25)).chr}.join
