@@ -33,7 +33,6 @@ module Authy
         self["message"] || "No error"
       end
     end
-    alias :message :error_msg
 
     def errors
       self["errors"] || @errors
@@ -50,10 +49,12 @@ module Authy
     end
 
     def parse_body
-      body = JSON.parse(@raw_response.body) rescue {}
+      body = JSON.parse(@raw_response.body)
       body.each do |k,v|
         self[k] = v
       end
+    rescue
+      self['message'] = 'invalid json'
     end
   end
 end

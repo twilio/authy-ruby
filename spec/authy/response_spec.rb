@@ -14,7 +14,6 @@ describe "Authy::Response" do
     it "should parse to json the body" do
       expect(response['v2']).to eq 42
       expect(response.error_msg).to eq "No error"
-      expect(response.message).to eq "No error"
       expect(response.ok?).to be_truthy
     end
   end
@@ -41,6 +40,7 @@ describe "Authy::Response" do
 
     it "should return the error message" do
       expect(response.error_msg).to eq "invalid json"
+      expect(response.message).to eq "invalid json"
     end
   end
 end
