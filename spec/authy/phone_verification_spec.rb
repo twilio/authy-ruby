@@ -4,22 +4,23 @@ describe "Authy::PhoneVerification" do
   describe "Sending the verification code" do
 
     it "should send the code via SMS" do
+      pending("API is not returning expected response in this case. The test phone number is invalid.")
       response = Authy::PhoneVerification.start(
-        :via => "sms",
-        :country_code => "1",
-        :phone_number => "111-111-1111"
+        via: "sms",
+        country_code: "1",
+        phone_number: "111-111-1111"
       )
 
-      response.should be_kind_of(Authy::Response)
-      response.should be_ok
-      response.message.should == "Text message sent to +1 111-111-1111."
+      expect(response).to be_kind_of(Authy::Response)
+      expect(response).to be_ok
+      expect(response.message).to eq "Text message sent to +1 111-111-1111."
     end
 
     # it "should send the code via CALL" do
     #   response = Authy::PhoneVerification.start(
-    #     :via => "call",
-    #     :country_code => "1",
-    #     :phone_number => "111-111-1111"
+    #     via: "call",
+    #     country_code: "1",
+    #     phone_number: "111-111-1111"
     #   )
 
     # response.should be_kind_of(Authy::Response)
@@ -31,34 +32,35 @@ describe "Authy::PhoneVerification" do
   describe "validate the fields required" do
     it "should return an error. Country code is required" do
       response = Authy::PhoneVerification.start(
-        :via => "sms",
-        :phone_number => "111-111-1111"
+        via: "sms",
+        phone_number: "111-111-1111"
       )
 
-      response.should_not be_ok
-      response.errors['message'] =~ /Country code is mandatory/
+
+      expect(response).to_not be_ok
+      expect(response.errors['message']).to match(/country_code - Parameter is required/)
     end
 
     it "should return an error. Cellphone is invalid" do
       response = Authy::PhoneVerification.start(
-        :via => "sms",
-        :country_code => "1",
-        :phone_number => "123"
+        via: "sms",
+        country_code: "1",
+        phone_number: "123"
       )
 
-      response.should_not be_ok
-      response.errors['message'] =~ /Phone number is invalid/
+      expect(response).to_not be_ok
+      expect(response.errors['message']).to eq('Phone number is invalid')
     end
   end
 
   describe "Check the verification code" do
     it "should return success true if code is correct" do
-      pending("API is not returning expected response in this case.")
+      pending("API is not returning expected response in this case. The test phone number is invalid.")
 
       response = Authy::PhoneVerification.check(
-        :country_code => "1",
-        :phone_number => "111-111-1111",
-        :verification_code => "0000"
+        country_code: "1",
+        phone_number: "111-111-1111",
+        verification_code: "0000"
       )
 
       expect(response).to be_ok
@@ -66,16 +68,29 @@ describe "Authy::PhoneVerification" do
     end
 
     it "should return an error if code is incorrect" do
-      pending("API is not returning expected response in this case.")
+      pending("API is not returning expected response in this case. The test phone number is invalid")
 
       response = Authy::PhoneVerification.check(
-        :country_code => "1",
-        :phone_number => "111-111-1111",
-        :verification_code => "1234"
+        country_code: "1",
+        phone_number: "111-111-1111",
+        verification_code: "1234"
       )
 
       expect(response).not_to be_ok
       expect(response.message).to eq('Verification code is incorrect.')
+    end
+  end
+
+  describe 'Check the phone number' do
+    it "should return an error if phone number is invalid" do
+      response = Authy::PhoneVerification.check(
+        country_code: "1",
+        phone_number: "111-111-1111",
+        verification_code: "1234"
+      )
+
+      expect(response).not_to be_ok
+      expect(response.message).to eq('Phone number is invalid')
     end
   end
 end

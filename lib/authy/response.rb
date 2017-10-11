@@ -39,6 +39,7 @@ module Authy
     end
 
     protected
+
     def method_missing(name, *args, &block)
       if self.include?(name.to_s)
         self[name.to_s]
@@ -48,10 +49,12 @@ module Authy
     end
 
     def parse_body
-      body = JSON.parse(@raw_response.body) rescue {}
+      body = JSON.parse(@raw_response.body)
       body.each do |k,v|
         self[k] = v
       end
+    rescue
+      self['message'] = 'invalid json'
     end
   end
 end

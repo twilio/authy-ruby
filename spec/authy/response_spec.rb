@@ -1,33 +1,46 @@
 require 'spec_helper'
 
 describe "Authy::Response" do
-  before :each do
-    @fake_response = OpenStruct.new
-    @fake_response.body = {'v1' => 'r1','v2' => 42}.to_json
-    @fake_response.status = 200
+  let(:response) { Authy::Response.new(fake_response) }
 
-    @response = Authy::Response.new(@fake_response)
+  context 'response is valid' do
+    let(:fake_response) do
+      OpenStruct.new.tap do |struct|
+        struct.body = { 'v1' => 'r1','v2' => 42 }.to_json
+        struct.status = 200
+      end
+    end
+
+    it "should parse to json the body" do
+      expect(response['v2']).to eq 42
+      expect(response.error_msg).to eq "No error"
+      expect(response.ok?).to be_truthy
+    end
   end
 
-  it "should parse to json the body" do
-    @response['v2'].should == 42
+  context 'response returns a 401 status code' do
+    let(:fake_response) do
+      OpenStruct.new.tap do |struct|
+        struct.status = 401
+      end
+    end
+
+    it 'response is not ok' do
+      expect(response.ok?).to be_falsey
+    end
   end
 
-  it "should be ok if the return code is 200" do
-    @response.ok?.should be_truthy
+  context 'response returns invalid json' do
+    let(:fake_response) do
+      OpenStruct.new.tap do |struct|
+        struct.body = 'invalid json'
+        struct.status = 401
+      end
+    end
 
-    @fake_response.status = 401
-    @response = Authy::Response.new(@fake_response)
-    @response.ok?.should be_falsey
-  end
-
-  it "should return the error message" do
-    @response.error_msg.should == "No error"
-
-    @fake_response.body = 'invalid json'
-    @fake_response.status = 401
-    @response = Authy::Response.new(@fake_response)
-
-    @response.error_msg.should == "invalid json"
+    it "should return the error message" do
+      expect(response.error_msg).to eq "invalid json"
+      expect(response.message).to eq "invalid json"
+    end
   end
 end
