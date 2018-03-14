@@ -83,6 +83,14 @@ the SMS pass force=true as an option
     response = Authy::API.request_sms(:id => user.authy_id, :force => true)
 ```
 
+If you wish to send SMS in a specific language, you can provide locale information in the params as shown below.
+
+```ruby
+    response = Authy::API.request_sms(:id => user.authy_id, :force => true, :locale => 'es')
+```
+
+If the locale that you provide is wrong or does not match, the SMS will be sent in english.
+
 ## Requesting token via a phone call
 
 `Authy::API.request_phone_call` takes the authy_id that you want to deliver the token by a phone call. This requires Authy Calls addon, please contact us to support@authy.com to enable this addon.
