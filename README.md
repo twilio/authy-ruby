@@ -146,7 +146,7 @@ This call will be ignored if the user is using the Authy Mobile App. If you ensu
 
 ### Starting a phone verification
 
-`Authy::PhoneVerification.start` takes a country code, phone number and a method (sms or call) to deliver the code.
+`Authy::PhoneVerification.start` takes a country code, phone number and a method (sms or call) to deliver the code.  You can also provide a custom_code but this feature needs to be enabled by support@twilio.com
 
 ```ruby
 response = Authy::PhoneVerification.start(via: "sms", country_code: 1, phone_number: "111-111-1111")

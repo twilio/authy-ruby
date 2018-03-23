@@ -4,6 +4,8 @@ module Authy
     #   :via (sms|call)
     #   :country_code Numeric calling country code of the country.
     #   :phone_number The persons phone number.
+    #   :custom_code Pass along any generated custom code.
+    #   :custom_message Custom Message.
     def self.start(params)
       params[:via] = "sms" unless %w(sms, call).include?(params[:via])
 

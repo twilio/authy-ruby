@@ -53,6 +53,20 @@ describe "Authy::PhoneVerification" do
     end
   end
 
+  describe 'Check that a custom code request' do
+    it "should return an error if not enabled" do
+      pending("API is not returning expected response in this case. The test phone number is invalid")
+
+      response = Authy::PhoneVerification.start(
+        country_code: "1",
+        phone_number: "111-111-1111",
+        custom_code: "1234"
+      )
+      expect(response).not_to be_ok
+      expect(response.message).to eq("Phone verification couldn't be created: custom codes are not allowed.")
+    end
+  end
+
   describe "Check the verification code" do
     it "should return success true if code is correct" do
       pending("API is not returning expected response in this case. The test phone number is invalid.")
@@ -93,4 +107,5 @@ describe "Authy::PhoneVerification" do
       expect(response.message).to eq('Phone number is invalid')
     end
   end
+
 end
