@@ -8,7 +8,7 @@ Ruby library to access the Authy API
     require 'authy'
 
     Authy.api_key = 'your-api-key'
-    Authy.api_uri = 'https://api.authy.com/'
+    Authy.api_uri = 'https://api.authy.com'
 ```
 
 Using Ruby on Rails? _Put this in **config/initializers** and create a new file called **authy.rb**._
