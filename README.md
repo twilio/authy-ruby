@@ -112,6 +112,22 @@ This call will be ignored if the user is using the Authy Mobile App. If you ensu
     response = Authy::API.request_phone_call(:id => user.authy_id, :force => true)
 ```
 
+## Requesting QR code for authenticator apps like Google Authenticator
+
+`Authy::API.request_qr_code` takes authy_id that you want to deliver the qr code. This requires **Generic authenticator tokens** to be enabled in Authy console setting. Optinally, you can provide `qr_size` as a number to decide the output of qr image (For example: `qr_size: 400` will returns a 400x400 image) and `label` as a custom label to be shown by the authenticator app.  
+
+```ruby
+    response = Authy::API.request_qr_code(id: user.authy_id, qr_size: 500, label: "My Example App")
+    if response.ok?
+      # qr code was generated
+    else
+      response.errors
+    end
+
+    # You can access the iamge link with
+    link = response.qr_code
+```
+
 ## Deleting users
 
 `Authy::API.delete_user` takes the authy_id of the user that you want to remove from your app.

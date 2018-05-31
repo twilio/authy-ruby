@@ -66,6 +66,25 @@ module Authy
 
     # options:
     # :id user id
+    # :qr_size qr size
+    # :qr_label context for qr code
+    def self.request_qr_code(params)
+      user_id = params.delete(:id) || params.delete('id')
+      qr_size = params.delete(:qr_size) || params.delete('qr_size') || 300
+      qr_label = params.delete(:qr_label) || params.delete('qr_label') || ""
+
+      return invalid_response('User id is invalid') unless is_digit?(user_id)
+      return invalid_response('Qr image size is invalid') unless is_digit?(qr_size)
+
+      response = post_request("protected/json/users/:user_id/secret" ,params.merge({
+        "user_id" => user_id,
+        "qr_size" => qr_size,
+        "label" => qr_label
+      }))
+    end
+
+    # options:
+    # :id user id
     # :force force phone_call
     def self.request_phone_call(params)
       user_id = params.delete(:id) || params.delete('id')

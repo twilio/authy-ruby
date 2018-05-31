@@ -121,6 +121,37 @@ describe "Authy::API" do
     end
   end
 
+  describe "requesting qr code for other authenticator apps" do
+    before do
+      @user = Authy::API.register_user(email: generate_email, cellphone: generate_cellphone, country_code: 1)
+      expect(@user).to be_ok
+    end
+
+    it "should request qrcode" do
+      url = "#{Authy.api_uri}/protected/json/users/#{Authy::API.escape_for_url(@user.id)}/secret"
+      expect_any_instance_of(HTTPClient).to receive(:request).with(:post, url, body: "qr_size=300&label=example+app+name", header: {"X-Authy-API-Key" => Authy.api_key}) { double(ok?: true, body: "", status: 200) }
+      response = Authy::API.send("request_qr_code", id: @user.id, qr_size: 300, qr_label: "example app name")
+      expect(response).to be_ok
+    end
+
+
+    context "user id is not a number" do
+      it "should not be ok" do
+        response = Authy::API.send("request_qr_code", id: "tony")
+        expect(response.errors['message']).to eq "User id is invalid"
+        expect(response).to_not be_ok
+      end
+    end
+
+    context "qr size is not a number" do
+      it "should return the right error" do
+        response = Authy::API.send("request_qr_code", id: @user.id, qr_size: "notanumber")
+        expect(response.errors['message']).to eq "Qr image size is invalid"
+        expect(response).to_not be_ok
+      end
+    end
+  end
+
   ["sms", "phone_call"].each do |kind|
     title = kind.upcase
     describe "Requesting #{title}" do
