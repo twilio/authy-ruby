@@ -13,7 +13,6 @@ module Authy
 
     include ::Phony
     include Authy::URL
-    Hash.include Authy::E164Adapter::HashAttributeAdapter
 
     extend HTTPClient::IncludeClient
     include_http_client(agent_name: USER_AGENT)
