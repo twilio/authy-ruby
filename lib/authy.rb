@@ -3,6 +3,7 @@ $:.unshift File.expand_path("..", __FILE__)
 require 'httpclient'
 require 'httpclient/include_client'
 require 'json'
+require 'phony'
 
 require 'authy/version'
 require 'authy/url_helpers'

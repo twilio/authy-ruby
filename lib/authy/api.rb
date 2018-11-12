@@ -12,6 +12,7 @@ module Authy
     MIN_TOKEN_SIZE = 6
     MAX_TOKEN_SIZE = 12
 
+    include ::Phony
     include Authy::URL
 
     extend HTTPClient::IncludeClient
@@ -20,6 +21,12 @@ module Authy
     def self.register_user(attributes)
       api_key = attributes.delete(:api_key) || Authy.api_key
       send_install_link_via_sms = attributes.delete(:send_install_link_via_sms) { true }
+
+      if attributes[:country_code].nil?
+        split = Phony.split(attributes[:cellphone])
+        attributes[:country_code] = split.first
+      end
+
       params = {
         :user => attributes,
         :send_install_link_via_sms => send_install_link_via_sms

@@ -61,6 +61,7 @@ GEM
       rack (>= 1.2, < 3)
     parser (2.4.0.2)
       ast (~> 2.3)
+    phony (2.16.5)
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -107,6 +108,7 @@ PLATFORMS
 DEPENDENCIES
   httpclient (>= 2.5.3.3)
   jeweler
+  phony
   pry
   rdoc
   reek
@@ -115,4 +117,4 @@ DEPENDENCIES
   yard (~> 0.9.11)
 
 BUNDLED WITH
-   1.16.1
+   1.16.6

@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 gem 'httpclient', ">= 2.5.3.3"
+gem 'phony'
 
 group :development do
   gem "rspec"

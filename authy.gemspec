@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('httpclient', '>= 2.5.3.3')
+  s.add_dependency('phony')
 
   s.add_development_dependency('rake')
   s.add_development_dependency('rspec')

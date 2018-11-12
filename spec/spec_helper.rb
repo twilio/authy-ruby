@@ -25,4 +25,9 @@ RSpec.configure do |config|
     n = rand(999) + 1000
     "192-967-#{n}"
   end
+
+  def generate_e164_number country_code: 1
+    n = rand(999) + 1000
+    "#{country_code}1922767-#{n}"
+  end
 end
