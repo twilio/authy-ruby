@@ -21,11 +21,8 @@ module Authy
     def self.register_user(attributes)
       api_key = attributes.delete(:api_key) || Authy.api_key
       send_install_link_via_sms = attributes.delete(:send_install_link_via_sms) { true }
-
-      if attributes[:country_code].nil?
-        split = Phony.split(attributes[:cellphone])
-        attributes[:country_code] = split.first
-      end
+      attributes = Authy::E164Adapter.adapt(attributes)
+      
 
       params = {
         :user => attributes,
