@@ -1,7 +1,7 @@
 require 'logger'
+require 'authy/e164_adapter'
 
 module Authy
-
   AUTHY_LOGGER = Logger.new(STDOUT)
   #
   #  Authy.api_key = 'foo'
@@ -14,6 +14,7 @@ module Authy
 
     include ::Phony
     include Authy::URL
+    Hash.include Authy::E164Adapter::HashAttributeAdapter
 
     extend HTTPClient::IncludeClient
     include_http_client(agent_name: USER_AGENT)
@@ -21,9 +22,8 @@ module Authy
     def self.register_user(attributes)
       api_key = attributes.delete(:api_key) || Authy.api_key
       send_install_link_via_sms = attributes.delete(:send_install_link_via_sms) { true }
-      attributes = Authy::E164Adapter.adapt(attributes)
+      attributes.adapt!
       
-
       params = {
         :user => attributes,
         :send_install_link_via_sms => send_install_link_via_sms

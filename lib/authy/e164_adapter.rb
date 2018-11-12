@@ -1,12 +1,10 @@
 module Authy
 	module E164Adapter
-		def self.adapt attributes
-			if attributes[:country_code].nil?
-        split = Phony.split(attributes[:cellphone].gsub(/\+/, ''))
-        attributes[:country_code] = split.first
-      end
-
-      attributes
+		module HashAttributeAdapter
+			def adapt!
+				split = Phony.split(self[:cellphone].gsub(/\+/, ''))
+        self[:country_code] = split.first
+			end
 		end
 	end
 end
