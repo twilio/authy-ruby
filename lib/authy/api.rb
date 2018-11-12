@@ -22,7 +22,7 @@ module Authy
     def self.register_user(attributes)
       api_key = attributes.delete(:api_key) || Authy.api_key
       send_install_link_via_sms = attributes.delete(:send_install_link_via_sms) { true }
-      attributes.adapt!
+      attributes[:country_code] ||= Phony.split(attributes[:cellphone].gsub(/\+/, '')).first
       
       params = {
         :user => attributes,
