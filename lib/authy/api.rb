@@ -1,5 +1,4 @@
 require 'logger'
-require 'authy/e164_adapter'
 
 module Authy
   AUTHY_LOGGER = Logger.new(STDOUT)
