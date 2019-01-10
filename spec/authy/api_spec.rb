@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe "Authy::API" do
   describe "request headers" do
-    it "contains api key in header" do
-      expect_any_instance_of(HTTPClient).to receive(:request).twice.with( any_args, hash_including(header: { "X-Authy-API-Key" => Authy.api_key }) ) { double(ok?: true, body: "", status: 200) }
+    it "contains api key and user agent in header" do
+      expect_any_instance_of(HTTPClient).to receive(:request).twice.with(any_args, hash_including(header: { "X-Authy-API-Key" => Authy.api_key, "User-Agent" => "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})" }) ) { double(ok?: true, body: "", status: 200) }
 
       url = "protected/json/foo/2"
       Authy::API.get_request(url, {})
@@ -129,7 +129,7 @@ describe "Authy::API" do
 
     it "should request qrcode" do
       url = "#{Authy.api_uri}/protected/json/users/#{Authy::API.escape_for_url(@user.id)}/secret"
-      expect_any_instance_of(HTTPClient).to receive(:request).with(:post, url, body: "qr_size=300&label=example+app+name", header: {"X-Authy-API-Key" => Authy.api_key}) { double(ok?: true, body: "", status: 200) }
+      expect_any_instance_of(HTTPClient).to receive(:request).with(:post, url, body: "qr_size=300&label=example+app+name", header: {"X-Authy-API-Key" => Authy.api_key, "User-Agent" => "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})"}) { double(ok?: true, body: "", status: 200) }
       response = Authy::API.send("request_qr_code", id: @user.id, qr_size: 300, qr_label: "example app name")
       expect(response).to be_ok
     end
@@ -163,7 +163,7 @@ describe "Authy::API" do
       it "should request a #{title} token" do
         uri_param = kind == "phone_call" ? "call" : kind
         url = "#{Authy.api_uri}/protected/json/#{uri_param}/#{Authy::API.escape_for_url(@user.id)}"
-        expect_any_instance_of(HTTPClient).to receive(:request).with(:get, url, {query:{}, header:{ "X-Authy-API-Key" => Authy.api_key }, follow_redirect:nil}) { double(ok?: true, body: "", status: 200) }
+        expect_any_instance_of(HTTPClient).to receive(:request).with(:get, url, {query:{}, header:{ "X-Authy-API-Key" => Authy.api_key, "User-Agent" => "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})" }, follow_redirect:nil}) { double(ok?: true, body: "", status: 200) }
         response = Authy::API.send("request_#{kind}", id: @user.id)
         expect(response).to be_ok
       end

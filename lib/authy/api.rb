@@ -15,7 +15,7 @@ module Authy
     include Authy::URL
 
     extend HTTPClient::IncludeClient
-    include_http_client(agent_name: USER_AGENT)
+    include_http_client
 
     def self.register_user(attributes)
       api_key = attributes.delete(:api_key) || Authy.api_key
@@ -172,7 +172,8 @@ module Authy
 
     def self.default_header(api_key: nil, params: {})
       header = {
-        "X-Authy-API-Key" => api_key || Authy.api_key
+        "X-Authy-API-Key" => api_key || Authy.api_key,
+        "User-Agent" => USER_AGENT
       }
 
       api_key_ = params.delete(:api_key) || params.delete("api_key")
