@@ -12,7 +12,6 @@ describe 'Authy' do
       Authy.api_key = @default_api_key
     end
 
-
     it "should set and read instance variable" do
       Authy.api_key = 'foo'
       expect(Authy.api_key).to eq 'foo'
@@ -42,6 +41,27 @@ describe 'Authy' do
     it "should fallback to default value" do
       Authy.api_url = nil
       expect(Authy.api_url).to eq 'https://api.authy.com'
+    end
+  end
+
+  describe "user_agent" do
+    before do
+      @default_user_agent = Authy.user_agent
+      Authy.user_agent = nil
+    end
+
+    after do
+      Authy.user_agent = @default_user_agent
+    end
+
+    it "should set and read instance variable" do
+      Authy.user_agent = 'AuthyRuby NewUserAgent'
+      expect(Authy.user_agent).to eq 'AuthyRuby NewUserAgent'
+    end
+
+    it "should fallback to default value" do
+      Authy.user_agent = nil
+      expect(Authy.user_agent).to eq "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})"
     end
   end
 end
