@@ -8,14 +8,13 @@ module Authy
   #  Authy.api_uri = 'http://test-authy-api.heroku.com/'
   #
   class API
-    USER_AGENT = "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})"
     MIN_TOKEN_SIZE = 6
     MAX_TOKEN_SIZE = 12
 
     include Authy::URL
 
     extend HTTPClient::IncludeClient
-    include_http_client(agent_name: USER_AGENT)
+    include_http_client
 
     def self.register_user(attributes)
       api_key = attributes.delete(:api_key) || Authy.api_key
@@ -172,7 +171,8 @@ module Authy
 
     def self.default_header(api_key: nil, params: {})
       header = {
-        "X-Authy-API-Key" => api_key || Authy.api_key
+        "X-Authy-API-Key" => api_key || Authy.api_key,
+        "User-Agent" => Authy.user_agent
       }
 
       api_key_ = params.delete(:api_key) || params.delete("api_key")
