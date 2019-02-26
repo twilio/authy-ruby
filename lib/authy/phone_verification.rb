@@ -7,7 +7,7 @@ module Authy
     #   :custom_code Pass along any generated custom code.
     #   :custom_message Custom Message.
     def self.start(params)
-      params[:via] = "sms" unless %w(sms, call).include?(params[:via])
+      params[:via] = "sms" unless %w(sms call).include?(params[:via])
 
       post_request("protected/json/phones/verification/start", params)
     end
