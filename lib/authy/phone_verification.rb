@@ -6,6 +6,8 @@ module Authy
     #   :phone_number The persons phone number.
     #   :custom_code Pass along any generated custom code.
     #   :custom_message Custom Message.
+    #   :code_length Length of code to be sent(4-10).
+    #   :locale The language of the message received by user. 
     def self.start(params)
       params[:via] = "sms" unless %w(sms call).include?(params[:via])
 

@@ -16,6 +16,19 @@ describe "Authy::PhoneVerification" do
       expect(response.message).to eq "Text message sent to +1 111-111-1111."
     end
 
+    it "should send the code via SMS with code length" do
+      response = Authy::PhoneVerification.start(
+        via: "sms",
+        country_code: "1",
+        phone_number: "201-555-0123",
+        code_length: "4"
+      )
+
+      expect(response).to be_kind_of(Authy::Response)
+      expect(response).to be_ok
+      expect(response.message).to eq "Text message sent to +1 201-555-0123."
+    end
+
     # it "should send the code via CALL" do
     #   response = Authy::PhoneVerification.start(
     #     via: "call",
