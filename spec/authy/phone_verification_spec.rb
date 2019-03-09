@@ -1,32 +1,33 @@
 require 'spec_helper'
 
 describe "Authy::PhoneVerification" do
-  describe "Sending the verification code" do
+  let(:valid_phone_number) { '201-555-0123' }
+  let(:invalid_phone_number) { '123' }
 
+  describe "Sending the verification code" do
     it "should send the code via SMS" do
-      pending("API is not returning expected response in this case. The test phone number is invalid.")
       response = Authy::PhoneVerification.start(
         via: "sms",
         country_code: "1",
-        phone_number: "111-111-1111"
+        phone_number: valid_phone_number
       )
 
       expect(response).to be_kind_of(Authy::Response)
       expect(response).to be_ok
-      expect(response.message).to eq "Text message sent to +1 111-111-1111."
+      expect(response.message).to eq "Text message sent to +1 #{valid_phone_number}."
     end
 
     it "should send the code via SMS with code length" do
       response = Authy::PhoneVerification.start(
         via: "sms",
         country_code: "1",
-        phone_number: "201-555-0123",
+        phone_number: valid_phone_number,
         code_length: "4"
       )
 
       expect(response).to be_kind_of(Authy::Response)
       expect(response).to be_ok
-      expect(response.message).to eq "Text message sent to +1 201-555-0123."
+      expect(response.message).to eq "Text message sent to +1 #{valid_phone_number}."
     end
 
     # it "should send the code via CALL" do
@@ -46,7 +47,7 @@ describe "Authy::PhoneVerification" do
     it "should return an error. Country code is required" do
       response = Authy::PhoneVerification.start(
         via: "sms",
-        phone_number: "111-111-1111"
+        phone_number: valid_phone_number
       )
 
 
@@ -58,7 +59,7 @@ describe "Authy::PhoneVerification" do
       response = Authy::PhoneVerification.start(
         via: "sms",
         country_code: "1",
-        phone_number: "123"
+        phone_number: invalid_phone_number
       )
 
       expect(response).to_not be_ok
@@ -68,25 +69,23 @@ describe "Authy::PhoneVerification" do
 
   describe 'Check that a custom code request' do
     it "should return an error if not enabled" do
-      pending("API is not returning expected response in this case. The test phone number is invalid")
-
       response = Authy::PhoneVerification.start(
         country_code: "1",
-        phone_number: "111-111-1111",
+        phone_number: valid_phone_number,
         custom_code: "1234"
       )
-      expect(response).not_to be_ok
-      expect(response.message).to eq("Phone verification couldn't be created: custom codes are not allowed.")
+      expect(response).to be_ok
+      expect(response.message).to eq("Text message sent to +1 #{valid_phone_number}.")
     end
   end
 
   describe "Check the verification code" do
     it "should return success true if code is correct" do
-      pending("API is not returning expected response in this case. The test phone number is invalid.")
+      pending("No pending verification for #{valid_phone_number}")
 
       response = Authy::PhoneVerification.check(
         country_code: "1",
-        phone_number: "111-111-1111",
+        phone_number: valid_phone_number,
         verification_code: "0000"
       )
 
@@ -95,11 +94,11 @@ describe "Authy::PhoneVerification" do
     end
 
     it "should return an error if code is incorrect" do
-      pending("API is not returning expected response in this case. The test phone number is invalid")
+      pending("No pending verification for #{valid_phone_number}")
 
       response = Authy::PhoneVerification.check(
         country_code: "1",
-        phone_number: "111-111-1111",
+        phone_number: valid_phone_number,
         verification_code: "1234"
       )
 
@@ -112,7 +111,7 @@ describe "Authy::PhoneVerification" do
     it "should return an error if phone number is invalid" do
       response = Authy::PhoneVerification.check(
         country_code: "1",
-        phone_number: "111-111-1111",
+        phone_number: invalid_phone_number,
         verification_code: "1234"
       )
 
