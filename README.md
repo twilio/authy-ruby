@@ -182,6 +182,28 @@ if response.ok?
 end
 ```
 
+### Check Verification Status using Verification UUID
+
+`Authy::PhoneVerification.status` takes an uuid from the original request.
+
+```ruby
+response = Authy::PhoneVerification.status(uuid: '550e8400-e29b-41d4-a716-446655440000')
+if response.ok?
+  # do something
+end
+```
+
+### Check Verification Status using Phone Number
+
+`Authy::PhoneVerification.status` takes a country code and a phone number.
+
+```ruby
+response = Authy::PhoneVerification.status(country_code: 1, phone_number: "111-111-1111")
+if response.ok?
+  # do something
+end
+```
+
 ## OneTouch Verification
 
 Another way to provide Two_factor authentication with Authy is by using OneTouch feature. 

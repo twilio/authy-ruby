@@ -121,4 +121,27 @@ describe "Authy::PhoneVerification" do
     end
   end
 
+  describe 'Check Verification Status using Verification UUID' do
+    it "should return an error if uuid not found" do
+      response = Authy::PhoneVerification.status(
+        uuid: '550e8400-e29b-41d4-a716-446655440000'
+      )
+
+      expect(response).not_to be_ok
+      expect(response.message).to eq('Phone verification not found')
+    end
+  end
+
+  describe 'Check Verification Status using Phone Number' do
+  it "should return an error if phone_number not found" do
+      response = Authy::PhoneVerification.status(
+          country_code: '1',
+          phone_number: '201-555-0123'
+      )
+
+      expect(response).not_to be_ok
+      expect(response.message).to eq('Phone verification not found')
+    end
+  end
+
 end

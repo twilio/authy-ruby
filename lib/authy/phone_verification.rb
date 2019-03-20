@@ -22,5 +22,12 @@ module Authy
       get_request("protected/json/phones/verification/check", params)
     end
 
+    # options:
+    #   :uuid The uuid from the original request.
+    #   :country_code Numeric calling country code of the country. (optional)
+    #   :phone_number The persons phone number. (optional)
+    def self.status(params)
+      get_request("protected/json/phones/verification/status", params)
+    end
   end
 end
