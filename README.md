@@ -59,17 +59,13 @@ Rails users can put this in config/initializers and create a new file called `au
 [Legacy (V1) documentation here.](verify-legacy-v1.md) **Verify V1 is not recommended for new development. Please consider using [Verify V2](https://www.twilio.com/docs/verify/api)**.
 
 ## Contributing
-
-Install development dependencies with pip:
-
-    sudo pip install -r requirements.txt
-
-To run tests:
-
-    make test
-or
-
-    make testfile tests/<test_case_file>
+* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
+* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
+* Fork the project.
+* Start a feature/bugfix branch.
+* Commit and push until you are happy with your contribution.
+* Add tests.
+* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit.
 
 ## Copyright
 
