@@ -1,232 +1,76 @@
-# Authy [![Build Status](https://travis-ci.org/twilio/authy-ruby.png?branch=master)](https://travis-ci.org/twilio/authy-ruby) [![Code Climate](https://codeclimate.com/github/authy/authy-ruby.png)](https://codeclimate.com/github/authy/authy-ruby)
+[![Build Status](https://travis-ci.org/twilio/authy-ruby.png?branch=master)](https://travis-ci.org/twilio/authy-ruby) [![Code Climate](https://codeclimate.com/github/authy/authy-ruby.png)](https://codeclimate.com/github/authy/authy-ruby)
 
-Ruby library to access the Authy API
+# Ruby Client for Twilio Authy Two-Factor Authentication (2FA) API
+
+Documentation for Ruby usage of the Authy API lives in the [official Twilio documentation](https://www.twilio.com/docs/authy/api/).
+
+The Authy API supports multiple channels of 2FA:
+* One-time passwords via SMS and voice.
+* Soft token ([TOTP](https://www.twilio.com/docs/glossary/totp) via the Authy App)
+* Push authentication via the Authy App
+
+If you only need SMS and Voice support for one-time passwords, we recommend using the [Twilio Verify API](https://www.twilio.com/docs/verify/api) instead. 
+
+[More on how to choose between Authy and Verify here.](https://www.twilio.com/docs/verify/authy-vs-verify)
+
+### Authy Quickstart
+
+For a full tutorial, check out either of the Ruby Authy Quickstart in our docs:
+* [Ruby/Rails Authy Quickstart](https://www.twilio.com/docs/authy/quickstart/two-factor-authentication-ruby-rails)
+
+## Authy Ruby Installation
+
+```
+gem install authy
+```
 
 ## Usage
 
-```ruby
-    require 'authy'
-
-    Authy.api_key = 'your-api-key'
-    Authy.api_uri = 'https://api.authy.com'
-```
-
-Using Ruby on Rails? _Put this in **config/initializers** and create a new file called **authy.rb**._
-
-## Registering a user
-
-__NOTE: User is matched based on cellphone and country code not e-mail.
-A cellphone is uniquely associated with an authy_id.__
-
-
-`Authy::API.register_user` requires the user e-mail address and cellphone. Optionally you can pass in the country_code or we will asume
-USA. The call will return you the authy id for the user that you need to store in your database.
-
-Assuming you have a `users` database with a `authy_id` field in the `users` database.
+To use the Authy client, require the `authy` gem and initialize it with our API URI and your production API Key found in the [Twilio Console](https://www.twilio.com/console/authy/applications/):
 
 ```ruby
-    authy = Authy::API.register_user(:email => 'users@email.com', :cellphone => "111-111-1111", :country_code => "1")
+require 'authy'
 
-    if authy.ok?
-      self.authy_id = authy.id # this will give you the user authy id to store it in your database
-    else
-      authy.errors # this will return an error hash
-    end
+Authy.api_uri = 'https://api.authy.com'
+Authy.api_key = 'your-api-key'
 ```
 
-## Verifying a user
+Rails users can put this in config/initializers and create a new file called `authy.rb`.
+
+![authy api key in console](https://s3.amazonaws.com/com.twilio.prod.twilio-docs/images/account-security-api-key.width-800.png)
+
+## 2FA Workflow
+
+1. [Create a user](https://www.twilio.com/docs/authy/api/users#enabling-new-user)
+2. [Send a one-time password](https://www.twilio.com/docs/authy/api/one-time-passwords)
+3. [Verify a one-time password](https://www.twilio.com/docs/authy/api/one-time-passwords#verify-a-one-time-password)
+
+**OR**
+
+1. [Create a user](https://www.twilio.com/docs/authy/api/users#enabling-new-user)
+2. [Send a push authentication](https://www.twilio.com/docs/authy/api/push-authentications)
+3. [Check a push authentication status](https://www.twilio.com/docs/authy/api/push-authentications#check-approval-request-status)
 
 
-__NOTE: Token verification is only enforced if the user has completed registration. To change this behaviour see Forcing Verification section below.__
+## <a name="phone-verification"></a>Phone Verification
 
-   >*Registration is completed once the user installs and registers the Authy mobile app or logins once successfully using SMS.*
+[Phone verification now lives in the Twilio API](https://www.twilio.com/docs/verify/api) and has [Ruby support through the official Twilio helper libraries](https://www.twilio.com/docs/libraries/ruby). 
 
-`Authy::API.verify` takes the authy_id that you are verifying and the token that you want to verify. You should have the authy_id in your database
+[Legacy (V1) documentation here.](verify-legacy-v1.md) **Verify V1 is not recommended for new development. Please consider using [Verify V2](https://www.twilio.com/docs/verify/api)**.
 
-```ruby
-    response = Authy::API.verify(:id => user.authy_id, :token => 'token-user-entered')
+## Contributing
 
-    if response.ok?
-      # token was valid, user can sign in
-    else
-      # token is invalid
-    end
-```
+Install development dependencies with pip:
 
-### Forcing Verification
+    sudo pip install -r requirements.txt
 
-If you wish to verify tokens even if the user has not yet complete registration, pass force=true when verifying the token.
+To run tests:
 
-```ruby
-    response = Authy::API.verify(:id => user.authy_id, :token => 'token-user-entered', :force => true)
-```
+    make test
+or
 
-## Requesting a SMS token
+    make testfile tests/<test_case_file>
 
-`Authy::API.request_sms` takes the authy_id that you want to send a SMS token. This requires Authy SMS plugin to be enabled.
+## Copyright
 
-```ruby
-    response = Authy::API.request_sms(:id => user.authy_id)
-
-    if response.ok?
-      # sms was sent
-    else
-      response.errors
-      #sms failed to send
-    end
-```
-
-This call will be ignored if the user is using the Authy Mobile App. If you still want to send
-the SMS pass force=true as an option
-
-```ruby
-    response = Authy::API.request_sms(:id => user.authy_id, :force => true)
-```
-
-If you wish to send SMS in a specific language, you can provide locale information in the params as shown below.
-
-```ruby
-    response = Authy::API.request_sms(:id => user.authy_id, :force => true, :locale => 'es')
-```
-
-If the locale that you provide is wrong or does not match, the SMS will be sent in english.
-
-## Requesting token via a phone call
-
-`Authy::API.request_phone_call` takes the authy_id that you want to deliver the token by a phone call. This requires Authy Calls addon, please contact us to support@authy.com to enable this addon.
-
-```ruby
-    response = Authy::API.request_phone_call(:id => user.authy_id)
-
-    if response.ok?
-      # call was done
-    else
-      response.errors
-      # call failed
-    end
-```
-
-This call will be ignored if the user is using the Authy Mobile App. If you ensure that user receives the phone call, you must pass force=true as an option
-
-```ruby
-    response = Authy::API.request_phone_call(:id => user.authy_id, :force => true)
-```
-
-## Requesting QR code for authenticator apps like Google Authenticator
-
-`Authy::API.request_qr_code` takes authy_id that you want to deliver the qr code. This requires **Generic authenticator tokens** to be enabled in Authy console setting. Optinally, you can provide `qr_size` as a number to decide the output of qr image (For example: `qr_size: 400` will returns a 400x400 image) and `label` as a custom label to be shown by the authenticator app.  
-
-```ruby
-    response = Authy::API.request_qr_code(id: user.authy_id, qr_size: 500, label: "My Example App")
-    if response.ok?
-      # qr code was generated
-    else
-      response.errors
-    end
-
-    # You can access the iamge link with
-    link = response.qr_code
-```
-
-## Deleting users
-
-`Authy::API.delete_user` takes the authy_id of the user that you want to remove from your app.
-
-```ruby
-    response = Authy::API.delete_user(:id => user.authy_id)
-
-    if response.ok?
-      # the user was deleted
-    else
-      response.errors
-      # we were unavailable to delete the user
-    end
-```
-
-## User status
-
-`Authy::API.user_status` takes the authy_id of the user that you want to get the status from your app.
-
-```ruby
-    response = Authy::API.user_status(:id => user.authy_id)
-
-    if response.ok?
-      # do something with user status
-    else
-      response.errors
-      # the user doesn't exist
-    end
-```
-
-## Phone Verification
-
-### Starting a phone verification
-
-`Authy::PhoneVerification.start` takes a country code, phone number and a method (sms or call) to deliver the code.  You can also provide a custom_code but this feature needs to be enabled by support@twilio.com
-
-```ruby
-response = Authy::PhoneVerification.start(via: "sms", country_code: 1, phone_number: "111-111-1111")
-if response.ok?
-  # verification was started
-end
-```
-
-### Checking a phone verification
-
-`Authy::PhoneVerification.check` takes a country code, phone number and a verification code.
-
-```ruby
-response = Authy::PhoneVerification.check(verification_code: "1234", country_code: 1, phone_number: "111-111-1111")
-if response.ok?
-  # verification was successful
-end
-```
-
-## OneTouch Verification
-
-Another way to provide Two_factor authentication with Authy is by using OneTouch feature. 
-Check the [official docs](http://docs.authy.com/onetouch_getting_started.html)
-
-`Authy::OneTouch.send_approval_request` takes the Authy user ID, a message to fill up the push notification
-body, an optional hash details for the user and another optional hash for hidden details for internal app
-control.
-
-```ruby
-one_touch = Authy::OneTouch.send_approval_request(
-        id: @user.authy_id,
-        message: "Request to Login",
-        details: {
-          'Email Address' => @user.email,
-        },
-        hidden_details: { ip: '1.1.1.1' }
-      )
-```
-
-As soon as the user approves or reject the push notification, Authy will hit a callback endpoint
-(set into Dashboard) updating user's `authy_status` flag. You might have an endpoint in a controller
-such as:
-
-```ruby
-def callback
-    authy_id = params[:authy_id]
-    @user = User.find_by authy_id: authy_id
-    @user.update(authy_status: params[:status])
-  end
-```
-
-
-## Contributing to authy
-
-* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
-* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
-* Fork the project.
-* Start a feature/bugfix branch.
-* Commit and push until you are happy with your contribution.
-* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
-* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
-
-Copyright
-==
-
-Copyright (c) 2011-2020 Authy Inc. See LICENSE.txt for
-further details.
+Copyright (c) 2011-2020 Authy Inc. See [LICENSE](https://github.com/twilio/authy-ruby/blob/master/LICENSE.txt) for further details.
