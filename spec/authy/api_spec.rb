@@ -228,6 +228,7 @@ describe "Authy::API" do
       end
 
       it "should be ok" do
+        skip("Flaky test. See: https://github.com/twilio/authy-ruby/issues/56")
         response = Authy::API.user_status(id: @user.id)
         expect(response.status).to be_kind_of(Hash)
         expect(response).to be_ok
