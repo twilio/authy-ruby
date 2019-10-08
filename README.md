@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/twilio/authy-ruby.png?branch=master)](https://travis-ci.org/twilio/authy-ruby) [![Code Climate](https://codeclimate.com/github/authy/authy-ruby.png)](https://codeclimate.com/github/authy/authy-ruby)
+[![Gem Version](https://badge.fury.io/rb/authy.svg)](https://rubygems.org/gems/authy/) [![Build Status](https://travis-ci.org/twilio/authy-ruby.png?branch=master)](https://travis-ci.org/twilio/authy-ruby) [![Code Climate](https://codeclimate.com/github/authy/authy-ruby.png)](https://codeclimate.com/github/authy/authy-ruby)
 
 # Ruby Client for Twilio Authy Two-Factor Authentication (2FA) API
 
