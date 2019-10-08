@@ -76,8 +76,8 @@ describe "Authy::PhoneVerification" do
         phone_number: valid_phone_number,
         custom_code: "1234"
       )
-      expect(response).to be_ok
-      expect(response.message).to eq("Text message sent to +1 #{valid_phone_number}.")
+      expect(response).not_to be_ok
+      expect(response.message).to eq("Phone verification couldn't be created: custom codes are not allowed.")
     end
   end
 
