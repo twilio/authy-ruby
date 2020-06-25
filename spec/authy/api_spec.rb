@@ -206,7 +206,7 @@ describe "Authy::API" do
 
       it "should be ok" do
         response = Authy::API.delete_user(id: @user.id)
-        expect(response.message).to eq "User was added to remove."
+        expect(response.message).to eq "User removed from application"
         expect(response).to be_ok
       end
     end
