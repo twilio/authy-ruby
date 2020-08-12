@@ -13,7 +13,6 @@ describe Authy::OneTouch do
     end
 
     it 'creates a new approval_request for user' do
-      pending('The Authy account this test uses needs to have OneTouch enabled. Another option is to mock the API')
       response = Authy::OneTouch.send_approval_request(
         id: @user.id,
         message: 'You are moving 10 BTC from your account',
@@ -49,7 +48,6 @@ describe Authy::OneTouch do
     end
 
     it 'does not require other fields as mandatory' do
-      pending('The Authy account this test uses needs to have OneTouch enabled. Another option is to mock the API')
       response = Authy::OneTouch.send_approval_request(
         id: @user.id,
         message: 'Test message'
@@ -60,7 +58,6 @@ describe Authy::OneTouch do
     end
 
     it 'checks logos format' do
-      pending('The Authy account this test uses needs to have OneTouch enabled. Another option is to mock the API')
       response = Authy::OneTouch.send_approval_request(
         id: @user.id,
         message: 'You are moving 10 BTC from your account',
@@ -82,7 +79,6 @@ describe Authy::OneTouch do
 
   describe '.approval_request_status' do
     it 'returns approval request status' do
-      pending('The Authy account this test uses needs to have OneTouch enabled. Another option is to mock the API')
       response = Authy::OneTouch.approval_request_status(
         uuid: '550e8400-e29b-41d4-a716-446655440000'
       )
