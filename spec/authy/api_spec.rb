@@ -134,7 +134,6 @@ describe "Authy::API" do
       expect(response).to be_ok
     end
 
-
     context "user id is not a number" do
       it "should not be ok" do
         response = Authy::API.send("request_qr_code", id: "tony")
@@ -185,6 +184,51 @@ describe "Authy::API" do
           expect(response.errors['message']).to eq "User not found."
           expect(response).to_not be_ok
         end
+      end
+    end
+  end
+
+  describe "Requesting email" do
+    before do
+      @user = Authy::API.register_user(email: generate_email, cellphone: generate_cellphone, country_code: 1)
+      expect(@user).to be_ok
+    end
+
+    it "should request an email token" do
+      url = "#{Authy.api_uri}/protected/json/email/#{Authy::API.escape_for_url(@user.id)}"
+      expect_any_instance_of(HTTPClient).to receive(:request).with(:post, url, body: "", header: {"X-Authy-API-Key" => Authy.api_key, "User-Agent" => "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})"}) { double(ok?: true, body: "", status: 200) }
+      response = Authy::API.request_email(id: @user.id)
+      expect(response).to be_ok
+    end
+
+    context "user doesn't exist" do
+      it "should not be ok" do
+        response = Authy::API.request_email(id: "tony")
+        expect(response.errors['message']).to eq "User not found."
+        expect(response).to_not be_ok
+      end
+    end
+  end
+
+  describe "update user email" do
+    context "user doesn't exist" do
+      it "should not be ok" do
+        response = Authy::API.update_user(id: "tony", email: generate_email)
+        expect(response.errors['message']).to eq "User not found."
+        expect(response).to_not be_ok
+      end
+    end
+
+    context "user exists" do
+      before do
+        @user = Authy::API.register_user(email: generate_email, cellphone: generate_cellphone, country_code: 1)
+        expect(@user).to be_ok
+      end
+
+      it "should be ok" do
+        response = Authy::API.update_user(id: @user.id, email: generate_email)
+        expect(response.message).to eq "User was updated successfully"
+        expect(response).to be_ok
       end
     end
   end
