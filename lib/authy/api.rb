@@ -1,12 +1,8 @@
-require 'logger'
+require "logger"
 
 module Authy
-
   AUTHY_LOGGER = Logger.new(STDOUT)
-  #
-  #  Authy.api_key = 'foo'
-  #  Authy.api_uri = 'http://test-authy-api.heroku.com/'
-  #
+
   class API
     MIN_TOKEN_SIZE = 6
     MAX_TOKEN_SIZE = 12
@@ -36,19 +32,18 @@ module Authy
     # :force (true|false) force to check even if the cellphone is not confirmed
     #
     def self.verify(params)
-      token = params.delete(:token) || params.delete('token')
-      user_id = params.delete(:id) || params.delete('id')
+      token = params.delete(:token) || params.delete("token")
+      user_id = params.delete(:id) || params.delete("id")
 
-      return invalid_response('Token format is invalid') unless token_is_safe?(token)
-      return invalid_response('User id is invalid') unless is_digit?(user_id)
+      return invalid_response("Token format is invalid") unless token_is_safe?(token)
+      return invalid_response("User id is invalid") unless is_digit?(user_id)
 
-      params[:force] = true if params[:force].nil? && params['force'].nil?
+      params[:force] = true if params[:force].nil? && params["force"].nil?
 
       response = get_request("protected/json/verify/:token/:user_id", params.merge({
-          "token" => token,
-          "user_id" => user_id
-        })
-      )
+        "token" => token,
+        "user_id" => user_id
+      }))
 
       return verify_response(response) if response.ok?
       return response
@@ -58,7 +53,7 @@ module Authy
     # :id user id
     # :force force sms
     def self.request_sms(params)
-      user_id = params.delete(:id) || params.delete('id')
+      user_id = params.delete(:id) || params.delete("id")
 
       get_request("protected/json/sms/:user_id", params.merge({"user_id" => user_id}))
     end
@@ -68,14 +63,14 @@ module Authy
     # :qr_size qr size
     # :qr_label context for qr code
     def self.request_qr_code(params)
-      user_id = params.delete(:id) || params.delete('id')
-      qr_size = params.delete(:qr_size) || params.delete('qr_size') || 300
-      qr_label = params.delete(:qr_label) || params.delete('qr_label') || ""
+      user_id = params.delete(:id) || params.delete("id")
+      qr_size = params.delete(:qr_size) || params.delete("qr_size") || 300
+      qr_label = params.delete(:qr_label) || params.delete("qr_label") || ""
 
-      return invalid_response('User id is invalid') unless is_digit?(user_id)
-      return invalid_response('Qr image size is invalid') unless is_digit?(qr_size)
+      return invalid_response("User id is invalid") unless is_digit?(user_id)
+      return invalid_response("Qr image size is invalid") unless is_digit?(qr_size)
 
-      response = post_request("protected/json/users/:user_id/secret" ,params.merge({
+      response = post_request("protected/json/users/:user_id/secret", params.merge({
         "user_id" => user_id,
         "qr_size" => qr_size,
         "label" => qr_label
@@ -86,7 +81,7 @@ module Authy
     # :id user id
     # :force force phone_call
     def self.request_phone_call(params)
-      user_id = params.delete(:id) || params.delete('id')
+      user_id = params.delete(:id) || params.delete("id")
 
       get_request("protected/json/call/:user_id", params.merge({"user_id" => user_id}))
     end
@@ -94,9 +89,9 @@ module Authy
     # options:
     # :id user id
     def self.delete_user(params)
-      user_id = params.delete(:id) || params.delete('id')
+      user_id = params.delete(:id) || params.delete("id")
 
-      post_request("protected/json/users/delete/:user_id", params.merge({"user_id" =>user_id}))
+      post_request("protected/json/users/delete/:user_id", params.merge({"user_id" => user_id}))
     end
 
     def self.user_status(params)
@@ -113,12 +108,12 @@ module Authy
       state, error = validate_for_url(uri_params, params)
 
       response = if state
-                   url = "#{Authy.api_uri}/#{eval_uri(uri, params)}"
-                   params = clean_uri_params(uri_params, params)
-                   http_client.post(url, :body => escape_query(params), header: header_)
-                 else
-                   build_error_response(error)
-                 end
+          url = "#{Authy.api_uri}/#{eval_uri(uri, params)}"
+          params = clean_uri_params(uri_params, params)
+          http_client.post(url, :body => escape_query(params), header: header_)
+        else
+          build_error_response(error)
+        end
       Authy::Response.new(response)
     end
 
@@ -128,24 +123,24 @@ module Authy
       uri_params = keys_to_verify(uri, params)
       state, error = validate_for_url(uri_params, params)
       response = if state
-                   url = "#{Authy.api_uri}/#{eval_uri(uri, params)}"
-                   params = clean_uri_params(uri_params, params)
-                   http_client.get(url, params, header_)
-                 else
-                   build_error_response(error)
-                 end
+          url = "#{Authy.api_uri}/#{eval_uri(uri, params)}"
+          params = clean_uri_params(uri_params, params)
+          http_client.get(url, params, header_)
+        else
+          build_error_response(error)
+        end
       Authy::Response.new(response)
     end
 
     def self.build_error_response(error = "blank uri param found")
       OpenStruct.new({
-        'status' => 400,
-        'body' => {
-          'success' => false,
-          'message' => error,
-          'errors' => {
-            'message' => error
-          }
+        "status" => 400,
+        "body" => {
+          "success" => false,
+          "message" => error,
+          "errors" => {
+            "message" => error,
+          },
         }.to_json
       })
     end
@@ -158,14 +153,14 @@ module Authy
       !!(/^\d+$/.match str.to_s)
     end
 
-    def self.invalid_response(str="Invalid resonse")
+    def self.invalid_response(str = "Invalid resonse")
       response = build_error_response(str)
       return Authy::Response.new(response)
     end
 
     def self.verify_response(response)
-      return response if response['token'] == 'is valid'
-      response = build_error_response('Token is invalid')
+      return response if response["token"] == "is valid"
+      response = build_error_response("Token is invalid")
       return Authy::Response.new(response)
     end
 
@@ -184,6 +179,5 @@ module Authy
 
       return header
     end
-
   end
 end
