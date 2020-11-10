@@ -18,16 +18,22 @@ describe "Authy::API" do
   end
 
   describe "Registering users" do
-    it "should find or create a user" do
+    let(:register_user_url) { "#{Authy.api_uri}/protected/json/users/new" }
+
+    it "should register a user successfully" do
       user_attributes = {
         email: generate_email,
         cellphone: generate_cellphone,
         country_code: 1
       }
-      response_json = { "message": "User created successfully.", "user": { "id": 81547 }, "success": true }.to_json
+      response_json = {
+        "message": "User created successfully.",
+        "user": { "id": 81547 },
+        "success": true
+      }.to_json
       expect(Authy::API.http_client).to receive(:request)
         .once
-        .with(:post, "#{Authy.api_uri}/protected/json/users/new", {
+        .with(:post, register_user_url, {
           :body => Utils.escape_query(
             :user => user_attributes,
             :send_install_link_via_sms => true
@@ -46,35 +52,96 @@ describe "Authy::API" do
     end
 
     it "should return the error messages as a hash" do
-      user = Authy::API.register_user(
+      user_attributes = {
         email: generate_email,
         cellphone: "abc-1234",
-        country_code: 1,
-      )
+        country_code: 1
+      }
+      response_json = {
+        "cellphone": "is invalid",
+        "message": "User was not valid",
+        "success": false,
+        "errors":{
+          "cellphone": "is invalid",
+          "message": "User was not valid"
+        },
+        "error_code":"60027"
+      }.to_json
+
+      expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:post, register_user_url, {
+          :body => Utils.escape_query(
+            :user => user_attributes,
+            :send_install_link_via_sms => true
+          ),
+          :header => headers
+        })
+        .and_return(double(:status => 400, :body => response_json))
+
+      user = Authy::API.register_user(user_attributes)
 
       expect(user.errors).to be_kind_of(Hash)
       expect(user.errors["cellphone"]).to include "is invalid"
     end
 
     it "should allow to override the API key" do
-      user = Authy::API.register_user(
+      response_json = {
+        "error_code": "60001",
+        "message": "Invalid API key",
+        "errors": {"message": "Invalid API key"},
+        "success":false
+      }.to_json
+      user_attributes = {
         email: generate_email,
         cellphone: generate_cellphone,
         country_code: 1,
-        api_key: "invalid_api_key",
-      )
+        api_key: "invalid_api_key"
+      }
+
+      headers["X-Authy-API-Key"] = "invalid_api_key"
+
+      expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:post, register_user_url, {
+          :body => Utils.escape_query(
+            :user => user_attributes.reject { |k,v| k === :api_key },
+            :send_install_link_via_sms => true
+          ),
+          :header => headers
+        })
+        .and_return(double(:status => 401, :body => response_json))
+
+      user = Authy::API.register_user(user_attributes)
 
       expect(user).to_not be_ok
       expect(user.errors["message"]).to match(/invalid api key/i)
     end
 
     it "should allow overriding send_install_link_via_sms default" do
-      user = Authy::API.register_user(
+      response_json = {
+        "message": "User created successfully.",
+        "user": { "id": 81547 },
+        "success": true
+      }.to_json
+      user_attributes = {
         email: generate_email,
         cellphone: generate_cellphone,
         country_code: 1,
-        send_install_link_via_sms: false, # Default is true. See http://docs.authy.com/totp.html#totp-api
-      )
+        send_install_link_via_sms: false
+      }
+      expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:post, register_user_url, {
+          :body => Utils.escape_query(
+            :user => user_attributes.reject { |k,v| k === :send_install_link_via_sms },
+            :send_install_link_via_sms => false
+          ),
+          :header => headers
+        })
+        .and_return(double(:status => 200, :body => response_json))
+
+        user = Authy::API.register_user(user_attributes)
 
       expect(user).to be_kind_of(Authy::Response)
       expect(user).to be_kind_of(Authy::User)
