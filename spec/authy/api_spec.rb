@@ -6,6 +6,8 @@ end
 
 describe "Authy::API" do
   let(:headers) { { "X-Authy-API-Key" => Authy.api_key, "User-Agent" => "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})" } }
+  let(:user_id) { 81547 }
+  let(:invalid_api_key) { "invalid_api_key" }
 
   describe "request headers" do
     it "contains api key and user agent in header" do
@@ -28,7 +30,7 @@ describe "Authy::API" do
       }
       response_json = {
         "message": "User created successfully.",
-        "user": { "id": 81547 },
+        "user": { "id": user_id },
         "success": true
       }.to_json
       expect(Authy::API.http_client).to receive(:request)
@@ -48,7 +50,7 @@ describe "Authy::API" do
       expect(user).to be_kind_of(Authy::User)
       expect(user).to_not be_nil
       expect(user.id).to_not be_nil
-      expect(user.id).to be(81547)
+      expect(user.id).to be(user_id)
     end
 
     it "should return the error messages as a hash" do
@@ -96,10 +98,10 @@ describe "Authy::API" do
         email: generate_email,
         cellphone: generate_cellphone,
         country_code: 1,
-        api_key: "invalid_api_key"
+        api_key: invalid_api_key
       }
 
-      headers["X-Authy-API-Key"] = "invalid_api_key"
+      headers["X-Authy-API-Key"] = invalid_api_key
 
       expect(Authy::API.http_client).to receive(:request)
         .once
@@ -121,7 +123,7 @@ describe "Authy::API" do
     it "should allow overriding send_install_link_via_sms default" do
       response_json = {
         "message": "User created successfully.",
-        "user": { "id": 81547 },
+        "user": { "id": user_id },
         "success": true
       }.to_json
       user_attributes = {
@@ -151,20 +153,12 @@ describe "Authy::API" do
     end
   end
 
-  describe "verificating tokens" do
-    before do
-      @email = generate_email
-      @cellphone = generate_cellphone
-      @user = Authy::API.register_user(
-        email: @email,
-        cellphone: @cellphone,
-        country_code: 1,
-      )
-      expect(@user).to be_ok
-    end
+  describe "verifying tokens" do
+    let(:token) { "123456" }
+    let(:verify_url) { "#{Authy.api_uri}/protected/json/verify/#{token}/#{user_id}" }
 
-    it "should fail to validate a given token if the user is not registered" do
-      response = Authy::API.verify(token: "invalid_token", id: @user.id)
+    it "should fail to validate a given token if the token is the wrong format" do
+      response = Authy::API.verify(token: "invalid_token", id: user_id)
 
       expect(response).to be_kind_of(Authy::Response)
       expect(response.ok?).to be_falsey
@@ -172,7 +166,23 @@ describe "Authy::API" do
     end
 
     it "should allow to override the API key" do
-      response = Authy::API.verify(token: "123456", id: @user["id"], api_key: "invalid_api_key")
+      response_json = {
+        "error_code": "60001",
+        "message": "Invalid API key",
+        "errors": {"message": "Invalid API key"},
+        "success": false
+      }.to_json
+      headers["X-Authy-API-Key"] = invalid_api_key
+      expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:get, verify_url, {
+          :query => { :force => true },
+          :header => headers,
+          :follow_redirect => nil
+        })
+        .and_return(double(:status => 401, :body => response_json))
+
+      response = Authy::API.verify(token: "123456", id: user_id, api_key: invalid_api_key)
 
       expect(response).to_not be_ok
       expect(response.errors["message"]).to match(/invalid api key/i)
@@ -180,25 +190,25 @@ describe "Authy::API" do
 
     it "should escape the params" do
       expect do
-        Authy::API.verify(token: "[=#%@$&#(!@);.,", id: @user["id"])
+        Authy::API.verify(token: "[=#%@$&#(!@);.,", id: user_id)
       end.to_not raise_error
     end
 
     it "should escape the params if have white spaces" do
       expect do
-        Authy::API.verify(token: "token with space", id: @user["id"])
+        Authy::API.verify(token: "token with space", id: user_id)
       end.to_not raise_error
     end
 
     it "should fail if a param is missing" do
-      response = Authy::API.verify(id: @user["id"])
+      response = Authy::API.verify(id: user_id)
       expect(response).to be_kind_of(Authy::Response)
       expect(response).to_not be_ok
       expect(response["message"]).to include("Token format is invalid")
     end
 
     it "fails when token format is invalid" do
-      response = Authy::API.verify(token: "0000", id: @user.id)
+      response = Authy::API.verify(token: "0000", id: user_id)
 
       expect(response.ok?).to be_falsey
       expect(response).to be_kind_of(Authy::Response)
@@ -207,15 +217,10 @@ describe "Authy::API" do
   end
 
   describe "requesting qr code for other authenticator apps" do
-    before do
-      @user = Authy::API.register_user(email: generate_email, cellphone: generate_cellphone, country_code: 1)
-      expect(@user).to be_ok
-    end
-
     it "should request qrcode" do
-      url = "#{Authy.api_uri}/protected/json/users/#{Authy::API.escape_for_url(@user.id)}/secret"
+      url = "#{Authy.api_uri}/protected/json/users/#{Authy::API.escape_for_url(user_id)}/secret"
       expect_any_instance_of(HTTPClient).to receive(:request).with(:post, url, body: "qr_size=300&label=example+app+name", header: { "X-Authy-API-Key" => Authy.api_key, "User-Agent" => "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})" }) { double(ok?: true, body: "", status: 200) }
-      response = Authy::API.send("request_qr_code", id: @user.id, qr_size: 300, qr_label: "example app name")
+      response = Authy::API.send("request_qr_code", id: user_id, qr_size: 300, qr_label: "example app name")
       expect(response).to be_ok
     end
 
@@ -229,7 +234,7 @@ describe "Authy::API" do
 
     context "qr size is not a number" do
       it "should return the right error" do
-        response = Authy::API.send("request_qr_code", id: @user.id, qr_size: "notanumber")
+        response = Authy::API.send("request_qr_code", id: user_id, qr_size: "notanumber")
         expect(response.errors["message"]).to eq "Qr image size is invalid"
         expect(response).to_not be_ok
       end
@@ -239,27 +244,22 @@ describe "Authy::API" do
   ["sms", "phone_call"].each do |kind|
     title = kind.upcase
     describe "Requesting #{title}" do
-      before do
-        @user = Authy::API.register_user(email: generate_email, cellphone: generate_cellphone, country_code: 1)
-        expect(@user).to be_ok
-      end
-
       it "should request a #{title} token" do
         uri_param = kind == "phone_call" ? "call" : kind
-        url = "#{Authy.api_uri}/protected/json/#{uri_param}/#{Authy::API.escape_for_url(@user.id)}"
+        url = "#{Authy.api_uri}/protected/json/#{uri_param}/#{Authy::API.escape_for_url(user_id)}"
         expect_any_instance_of(HTTPClient).to receive(:request).with(:get, url, { query: {}, header: { "X-Authy-API-Key" => Authy.api_key, "User-Agent" => "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})" }, follow_redirect: nil }) { double(ok?: true, body: "", status: 200) }
-        response = Authy::API.send("request_#{kind}", id: @user.id)
+        response = Authy::API.send("request_#{kind}", id: user_id)
         expect(response).to be_ok
       end
 
       it "should allow to override the API key" do
-        response = Authy::API.send("request_#{kind}", id: @user.id, api_key: "invalid_api_key")
+        response = Authy::API.send("request_#{kind}", id: user_id, api_key: invalid_api_key)
         expect(response).to_not be_ok
         expect(response.errors["message"]).to match(/invalid api key/i)
       end
 
       it "should request a #{title} token using custom actions" do
-        response = Authy::API.send("request_#{kind}", id: @user.id, action: "custom action?", action_message: "Action message $%^?@#")
+        response = Authy::API.send("request_#{kind}", id: user_id, action: "custom action?", action_message: "Action message $%^?@#")
         expect(response).to be_ok
       end
 
@@ -320,11 +320,6 @@ describe "Authy::API" do
   end
 
   describe "blank params" do
-    before do
-      @user = Authy::API.register_user(email: generate_email, cellphone: generate_cellphone, country_code: 1)
-      expect(@user).to be_ok
-    end
-
     [:request_sms, :request_phone_call, :delete_user].each do |method|
       it "should return a proper response with the errors for #{method}" do
         response = Authy::API.send(method, id: nil)
