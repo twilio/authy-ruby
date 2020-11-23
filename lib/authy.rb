@@ -6,7 +6,6 @@ require 'json'
 
 require 'authy/version'
 require 'authy/url_helpers'
-require 'authy/core_ext'
 require 'authy/response'
 require 'authy/models/user'
 require 'authy/config'
