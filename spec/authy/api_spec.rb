@@ -158,6 +158,7 @@ describe "Authy::API" do
     let(:verify_url) { "#{Authy.api_uri}/protected/json/verify/#{token}/#{user_id}" }
 
     it "should fail to validate a given token if the token is the wrong format" do
+      expect(Authy::API.http_client).to receive(:request).never
       response = Authy::API.verify(token: "invalid_token", id: user_id)
 
       expect(response).to be_kind_of(Authy::Response)
@@ -189,18 +190,21 @@ describe "Authy::API" do
     end
 
     it "should escape the params" do
+      expect(Authy::API.http_client).to receive(:request).never
       expect do
         Authy::API.verify(token: "[=#%@$&#(!@);.,", id: user_id)
       end.to_not raise_error
     end
 
     it "should escape the params if have white spaces" do
+      expect(Authy::API.http_client).to receive(:request).never
       expect do
         Authy::API.verify(token: "token with space", id: user_id)
       end.to_not raise_error
     end
 
     it "should fail if a param is missing" do
+      expect(Authy::API.http_client).to receive(:request).never
       response = Authy::API.verify(id: user_id)
       expect(response).to be_kind_of(Authy::Response)
       expect(response).to_not be_ok
@@ -208,6 +212,7 @@ describe "Authy::API" do
     end
 
     it "fails when token format is invalid" do
+      expect(Authy::API.http_client).to receive(:request).never
       response = Authy::API.verify(token: "0000", id: user_id)
 
       expect(response.ok?).to be_falsey
@@ -226,6 +231,7 @@ describe "Authy::API" do
 
     context "user id is not a number" do
       it "should not be ok" do
+        expect(Authy::API.http_client).to receive(:request).never
         response = Authy::API.send("request_qr_code", id: "tony")
         expect(response.errors["message"]).to eq "User id is invalid"
         expect(response).to_not be_ok
@@ -234,6 +240,7 @@ describe "Authy::API" do
 
     context "qr size is not a number" do
       it "should return the right error" do
+        expect(Authy::API.http_client).to receive(:request).never
         response = Authy::API.send("request_qr_code", id: user_id, qr_size: "notanumber")
         expect(response.errors["message"]).to eq "Qr image size is invalid"
         expect(response).to_not be_ok
@@ -244,27 +251,72 @@ describe "Authy::API" do
   ["sms", "phone_call"].each do |kind|
     title = kind.upcase
     describe "Requesting #{title}" do
+      let(:uri_param) { kind == "phone_call" ? "call" : kind }
+      let(:url) { "#{Authy.api_uri}/protected/json/#{uri_param}/#{Authy::API.escape_for_url(user_id)}" }
+
       it "should request a #{title} token" do
-        uri_param = kind == "phone_call" ? "call" : kind
-        url = "#{Authy.api_uri}/protected/json/#{uri_param}/#{Authy::API.escape_for_url(user_id)}"
         expect_any_instance_of(HTTPClient).to receive(:request).with(:get, url, { query: {}, header: { "X-Authy-API-Key" => Authy.api_key, "User-Agent" => "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})" }, follow_redirect: nil }) { double(ok?: true, body: "", status: 200) }
         response = Authy::API.send("request_#{kind}", id: user_id)
         expect(response).to be_ok
       end
 
       it "should allow to override the API key" do
+        response_json = {
+          "error_code": "60001",
+          "message": "Invalid API key",
+          "errors": {"message": "Invalid API key"},
+          "success":false
+        }.to_json
+        headers["X-Authy-API-Key"] = invalid_api_key
+        expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:get, url, {
+          :header => headers,
+          :query => {},
+          :follow_redirect => nil
+        })
+        .and_return(double(:status => 401, :body => response_json))
         response = Authy::API.send("request_#{kind}", id: user_id, api_key: invalid_api_key)
         expect(response).to_not be_ok
         expect(response.errors["message"]).to match(/invalid api key/i)
       end
 
       it "should request a #{title} token using custom actions" do
+        response_json = {
+          :success => true
+        }.to_json
+        expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:get, url, {
+          :header => headers,
+          :query => {
+            :action => "custom action?",
+            :action_message => "Action message $%^?@#"
+          },
+          :follow_redirect => nil
+        })
+        .and_return(double(:status => 200, :body => response_json))
         response = Authy::API.send("request_#{kind}", id: user_id, action: "custom action?", action_message: "Action message $%^?@#")
         expect(response).to be_ok
       end
 
       context "user doesn't exist" do
         it "should not be ok" do
+          url = "#{Authy.api_uri}/protected/json/#{uri_param}/#{Authy::API.escape_for_url("tony")}"
+          response_json = {
+            "message" => "User not found.",
+            "success" => false,
+            "errors" => { "message" => "User not found." },
+            "error_code" => "60026"
+          }.to_json
+          expect(Authy::API.http_client).to receive(:request)
+          .once
+          .with(:get, url, {
+            :header => headers,
+            :query => { },
+            :follow_redirect => nil
+          })
+          .and_return(double(:status => 404, :body => response_json))
           response = Authy::API.send("request_#{kind}", id: "tony")
           expect(response.errors["message"]).to eq "User not found."
           expect(response).to_not be_ok
@@ -276,6 +328,22 @@ describe "Authy::API" do
   describe "delete users" do
     context "user doesn't exist" do
       it "should not be ok" do
+        url = "#{Authy.api_uri}/protected/json/users/delete/#{Authy::API.escape_for_url("tony")}"
+        response_json = {
+          "message" => "User not found.",
+          "success" => false,
+          "errors" => {
+            "message" => "User not found."
+          },
+          "error_code" => "60026"
+        }.to_json
+        expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:post, url, {
+          :header => headers,
+          :body => ""
+        })
+        .and_return(double(:status => 404, :body => response_json))
         response = Authy::API.delete_user(id: "tony")
         expect(response.errors["message"]).to eq "User not found."
         expect(response).to_not be_ok
@@ -283,13 +351,20 @@ describe "Authy::API" do
     end
 
     context "user exists" do
-      before do
-        @user = Authy::API.register_user(email: generate_email, cellphone: generate_cellphone, country_code: 1)
-        expect(@user).to be_ok
-      end
-
+      let(:url) { "#{Authy.api_uri}/protected/json/users/delete/31567" }
       it "should be ok" do
-        response = Authy::API.delete_user(id: @user.id)
+        response_json = {
+          "message" => "User removed from application",
+          "success" => false
+        }.to_json
+        expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:post, url, {
+          :header => headers,
+          :body => ""
+        })
+        .and_return(double(:status => 200, :body => response_json))
+        response = Authy::API.delete_user(id: 31567)
         expect(response.message).to eq "User removed from application"
         expect(response).to be_ok
       end
@@ -299,6 +374,23 @@ describe "Authy::API" do
   describe "user status" do
     context "user doesn't exist" do
       it "should not be ok" do
+        url = "#{Authy.api_uri}/protected/json/users/tony/status"
+        response_json = {
+          "message" => "User not found.",
+          "success" => false,
+          "errors" => {
+            "message" => "User not found."
+          },
+          "error_code" => "60026"
+        }.to_json
+        expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:get, url, {
+          :header => headers,
+          :query => {},
+          :follow_redirect => nil
+        })
+        .and_return(double(:status => 404, :body => response_json))
         response = Authy::API.user_status(id: "tony")
         expect(response.errors["message"]).to eq "User not found."
         expect(response).to_not be_ok
@@ -312,7 +404,41 @@ describe "Authy::API" do
       end
 
       it "should be ok" do
-        response = Authy::API.user_status(id: @user.id)
+        url = "#{Authy.api_uri}/protected/json/users/290907/status"
+        response_json = {
+          "status" => {
+            "authy_id" => 290907,
+            "confirmed" => true,
+            "registered" => false,
+            "country_code" => 1,
+            "phone_number" => "XXX-XXX-1118",
+            "email" => "alfvawmu@authy.com",
+            "devices" => [],
+            "has_hard_token" => false,
+            "account_disabled" => false,
+            "detailed_devices" => [{
+              "device_type" => "authy",
+              "os_type" => "unknown",
+              "registration_device_id" => nil,
+              "registration_method" => nil,
+              "device_id" => 290908,
+              "last_sync_date" => 0,
+              "creation_date" => 1433868212
+            }],
+            "deleted_devices" => []
+          },
+          "message" => "User status.",
+          "success" => true
+        }.to_json
+        expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:get, url, {
+          :header => headers,
+          :query => {},
+          :follow_redirect => nil
+        })
+        .and_return(double(:status => 200, :body => response_json))
+        response = Authy::API.user_status(id: 290907)
         expect(response.status).to be_kind_of(Hash)
         expect(response).to be_ok
       end
@@ -322,6 +448,7 @@ describe "Authy::API" do
   describe "blank params" do
     [:request_sms, :request_phone_call, :delete_user].each do |method|
       it "should return a proper response with the errors for #{method}" do
+        expect(Authy::API.http_client).to receive(:request).never
         response = Authy::API.send(method, id: nil)
         expect(response).to_not be_ok
         expect(response.message).to eq "user_id is blank."
@@ -329,6 +456,7 @@ describe "Authy::API" do
     end
 
     it "should return a prope response with the errors for verify" do
+      expect(Authy::API.http_client).to receive(:request).never
       response = Authy::API.verify({})
       expect(response).to_not be_ok
       expect(response.message).to eq "Token format is invalid"
