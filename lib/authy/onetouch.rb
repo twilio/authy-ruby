@@ -23,7 +23,7 @@ module Authy
       begin
         self.clean_hash!(details)
         self.clean_hash!(hidden_details)
-        self.clean_logos!(logos)
+        logos = self.clean_logos!(logos)
       rescue => e
         return invalid_response("Invalid parameters: #{e.message}")
       end
