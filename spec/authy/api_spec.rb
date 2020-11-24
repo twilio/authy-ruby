@@ -398,11 +398,6 @@ describe "Authy::API" do
     end
 
     context "user exists" do
-      before do
-        @user = Authy::API.register_user(email: generate_email, cellphone: generate_cellphone, country_code: 1)
-        expect(@user).to be_ok
-      end
-
       it "should be ok" do
         url = "#{Authy.api_uri}/protected/json/users/290907/status"
         response_json = {
