@@ -1,8 +1,6 @@
 require "logger"
 
 module Authy
-  AUTHY_LOGGER = Logger.new(STDOUT)
-
   class API
     MIN_TOKEN_SIZE = 6
     MAX_TOKEN_SIZE = 12
@@ -21,7 +19,7 @@ module Authy
       }
 
       url = "#{Authy.api_uri}/protected/json/users/new"
-      response = http_client.post(url, :body => escape_query(params), :header => default_header(api_key: api_key))
+      response = http_client.post(url, :body => escape_query(params), :header => default_header(params: { api_key: api_key }))
 
       Authy::User.new(response)
     end
@@ -164,18 +162,13 @@ module Authy
       return Authy::Response.new(response)
     end
 
-    def self.default_header(api_key: nil, params: {})
+    def self.default_header(params: {})
+      api_key = params.delete(:api_key) || params.delete("api_key")
+
       header = {
         "X-Authy-API-Key" => api_key || Authy.api_key,
         "User-Agent" => Authy.user_agent
       }
-
-      api_key_ = params.delete(:api_key) || params.delete("api_key")
-
-      if api_key_ && api_key_.strip != ""
-        AUTHY_LOGGER.warn("[DEPRECATED]: The Authy API key should not be sent as a parameter. Please send the HTTP header 'X-Authy-API-Key' instead.")
-        header["X-Authy-API-Key"] = api_key_
-      end
 
       return header
     end
