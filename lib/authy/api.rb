@@ -86,12 +86,31 @@ module Authy
 
     # options:
     # :id user id
+    def self.request_email(params)
+      user_id = params.delete(:id) || params.delete('id')
+
+      post_request("protected/json/email/:user_id", params.merge({"user_id" => user_id}))
+    end
+
+    # options:
+    # :id user id
+    # :email user's new email
+    def self.update_user(params)
+      user_id = params.delete(:id) || params.delete('id')
+
+      post_request("protected/json/users/:user_id/update", params.merge({"user_id" => user_id}))
+    end
+
+    # options:
+    # :id user id
     def self.delete_user(params)
       user_id = params.delete(:id) || params.delete("id")
 
       post_request("protected/json/users/delete/:user_id", params.merge({"user_id" => user_id}))
     end
 
+    # options:
+    # :id user id
     def self.user_status(params)
       user_id = params.delete(:id) || params.delete("id")
       get_request("protected/json/users/:user_id/status", params.merge({"user_id" => user_id}))
