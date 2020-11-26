@@ -29,9 +29,9 @@ describe "Authy::API" do
         country_code: 1
       }
       response_json = {
-        "message": "User created successfully.",
-        "user": { "id": user_id },
-        "success": true
+        "message" => "User created successfully.",
+        "user" => { "id" => user_id },
+        "success" => true
       }.to_json
       expect(Authy::API.http_client).to receive(:request)
         .once
@@ -60,14 +60,14 @@ describe "Authy::API" do
         country_code: 1
       }
       response_json = {
-        "cellphone": "is invalid",
-        "message": "User was not valid",
-        "success": false,
-        "errors":{
-          "cellphone": "is invalid",
-          "message": "User was not valid"
+        "cellphone" => "is invalid",
+        "message" => "User was not valid",
+        "success" => false,
+        "errors" => {
+          "cellphone" => "is invalid",
+          "message" => "User was not valid"
         },
-        "error_code":"60027"
+        "error_code" => "60027"
       }.to_json
 
       expect(Authy::API.http_client).to receive(:request)
@@ -89,10 +89,10 @@ describe "Authy::API" do
 
     it "should allow to override the API key" do
       response_json = {
-        "error_code": "60001",
-        "message": "Invalid API key",
-        "errors": {"message": "Invalid API key"},
-        "success":false
+        "error_code" => "60001",
+        "message" => "Invalid API key",
+        "errors" => {"message" => "Invalid API key"},
+        "success" => false
       }.to_json
       user_attributes = {
         email: generate_email,
@@ -122,9 +122,9 @@ describe "Authy::API" do
 
     it "should allow overriding send_install_link_via_sms default" do
       response_json = {
-        "message": "User created successfully.",
-        "user": { "id": user_id },
-        "success": true
+        "message" => "User created successfully.",
+        "user" => { "id" => user_id },
+        "success" => true
       }.to_json
       user_attributes = {
         email: generate_email,
@@ -168,10 +168,10 @@ describe "Authy::API" do
 
     it "should allow to override the API key" do
       response_json = {
-        "error_code": "60001",
-        "message": "Invalid API key",
-        "errors": {"message": "Invalid API key"},
-        "success": false
+        "error_code" => "60001",
+        "message" => "Invalid API key",
+        "errors" => {"message" => "Invalid API key"},
+        "success" => false
       }.to_json
       headers["X-Authy-API-Key"] = invalid_api_key
       expect(Authy::API.http_client).to receive(:request)
@@ -262,10 +262,10 @@ describe "Authy::API" do
 
       it "should allow to override the API key" do
         response_json = {
-          "error_code": "60001",
-          "message": "Invalid API key",
-          "errors": {"message": "Invalid API key"},
-          "success":false
+          "error_code" => "60001",
+          "message" => "Invalid API key",
+          "errors" => {"message" => "Invalid API key"},
+          "success" => false
         }.to_json
         headers["X-Authy-API-Key"] = invalid_api_key
         expect(Authy::API.http_client).to receive(:request)
@@ -326,20 +326,41 @@ describe "Authy::API" do
   end
 
   describe "Requesting email" do
-    before do
-      @user = Authy::API.register_user(email: generate_email, cellphone: generate_cellphone, country_code: 1)
-      expect(@user).to be_ok
-    end
-
     it "should request an email token" do
-      url = "#{Authy.api_uri}/protected/json/email/#{Authy::API.escape_for_url(@user.id)}"
-      expect_any_instance_of(HTTPClient).to receive(:request).with(:post, url, body: "", header: {"X-Authy-API-Key" => Authy.api_key, "User-Agent" => "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})"}) { double(ok?: true, body: "", status: 200) }
-      response = Authy::API.request_email(id: @user.id)
+      response_json = {
+        "success" => true,
+        "message" => "Email token was sent",
+        "email" => "recipient@foo.com",
+        "email_id" => "EMa364aa751cc280d8c22772307e2c5760"
+      }.to_json
+      url = "#{Authy.api_uri}/protected/json/email/#{Authy::API.escape_for_url(user_id)}"
+
+      expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:post, url, body: "", header: headers)
+        .and_return(double(ok?: true, body: response_json, status: 200))
+      response = Authy::API.request_email(id: user_id)
       expect(response).to be_ok
     end
 
     context "user doesn't exist" do
       it "should not be ok" do
+        url = "#{Authy.api_uri}/protected/json/email/#{Authy::API.escape_for_url("tony")}"
+        response_json = {
+          "message" => "User not found.",
+          "success" => false,
+          "errors" => {
+            "message" => "User not found."
+          },
+          "error_code" => "60026"
+        }.to_json
+        expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:post, url, {
+          :header => headers,
+          :body => ""
+        })
+        .and_return(double(:status => 404, :body => response_json))
         response = Authy::API.request_email(id: "tony")
         expect(response.errors['message']).to eq "User not found."
         expect(response).to_not be_ok
@@ -350,20 +371,45 @@ describe "Authy::API" do
   describe "update user email" do
     context "user doesn't exist" do
       it "should not be ok" do
-        response = Authy::API.update_user(id: "tony", email: generate_email)
+        url = "#{Authy.api_uri}/protected/json/users/#{Authy::API.escape_for_url("tony")}/update"
+        response_json = {
+          "message" => "User not found.",
+          "success" => false,
+          "errors" => {
+            "message" => "User not found."
+          },
+          "error_code" => "60026"
+        }.to_json
+        new_email = generate_email
+        expect(Authy::API.http_client).to receive(:request)
+        .once
+        .with(:post, url, {
+          :header => headers,
+          :body => Utils.escape_query(:email => new_email)
+        })
+        .and_return(double(:status => 404, :body => response_json))
+
+        response = Authy::API.update_user(id: "tony", email: new_email)
         expect(response.errors['message']).to eq "User not found."
         expect(response).to_not be_ok
       end
     end
 
     context "user exists" do
-      before do
-        @user = Authy::API.register_user(email: generate_email, cellphone: generate_cellphone, country_code: 1)
-        expect(@user).to be_ok
-      end
-
       it "should be ok" do
-        response = Authy::API.update_user(id: @user.id, email: generate_email)
+        response_json = {
+          "message" => "User was updated successfully",
+          "success" => true
+        }.to_json
+        url = "#{Authy.api_uri}/protected/json/users/#{Authy::API.escape_for_url(user_id)}/update"
+        new_email = generate_email
+        expect(Authy::API.http_client).to receive(:request)
+          .once
+          .with(:post, url, body: Utils.escape_query({
+            email: new_email
+          }), header: headers)
+          .and_return(double(ok?: true, body: response_json, status: 200))
+        response = Authy::API.update_user(id: user_id, email: new_email)
         expect(response.message).to eq "User was updated successfully"
         expect(response).to be_ok
       end
