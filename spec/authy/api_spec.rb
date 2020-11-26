@@ -223,7 +223,7 @@ describe "Authy::API" do
 
   describe "requesting qr code for other authenticator apps" do
     it "should request qrcode" do
-      url = "#{Authy.api_uri}/protected/json/users/#{Authy::API.escape_for_url(user_id)}/secret"
+      url = "#{Authy.api_uri}/protected/json/users/#{user_id}/secret"
       expect_any_instance_of(HTTPClient).to receive(:request).with(:post, url, body: "qr_size=300&label=example+app+name", header: { "X-Authy-API-Key" => Authy.api_key, "User-Agent" => "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})" }) { double(ok?: true, body: "", status: 200) }
       response = Authy::API.send("request_qr_code", id: user_id, qr_size: 300, qr_label: "example app name")
       expect(response).to be_ok
@@ -252,7 +252,7 @@ describe "Authy::API" do
     title = kind.upcase
     describe "Requesting #{title}" do
       let(:uri_param) { kind == "phone_call" ? "call" : kind }
-      let(:url) { "#{Authy.api_uri}/protected/json/#{uri_param}/#{Authy::API.escape_for_url(user_id)}" }
+      let(:url) { "#{Authy.api_uri}/protected/json/#{uri_param}/#{user_id}" }
 
       it "should request a #{title} token" do
         expect_any_instance_of(HTTPClient).to receive(:request).with(:get, url, { query: {}, header: { "X-Authy-API-Key" => Authy.api_key, "User-Agent" => "AuthyRuby/#{Authy::VERSION} (#{RUBY_PLATFORM}, Ruby #{RUBY_VERSION})" }, follow_redirect: nil }) { double(ok?: true, body: "", status: 200) }
@@ -302,7 +302,7 @@ describe "Authy::API" do
 
       context "user doesn't exist" do
         it "should not be ok" do
-          url = "#{Authy.api_uri}/protected/json/#{uri_param}/#{Authy::API.escape_for_url("tony")}"
+          url = "#{Authy.api_uri}/protected/json/#{uri_param}/tony"
           response_json = {
             "message" => "User not found.",
             "success" => false,
@@ -333,7 +333,7 @@ describe "Authy::API" do
         "email" => "recipient@foo.com",
         "email_id" => "EMa364aa751cc280d8c22772307e2c5760"
       }.to_json
-      url = "#{Authy.api_uri}/protected/json/email/#{Authy::API.escape_for_url(user_id)}"
+      url = "#{Authy.api_uri}/protected/json/email/#{user_id}"
 
       expect(Authy::API.http_client).to receive(:request)
         .once
@@ -345,7 +345,7 @@ describe "Authy::API" do
 
     context "user doesn't exist" do
       it "should not be ok" do
-        url = "#{Authy.api_uri}/protected/json/email/#{Authy::API.escape_for_url("tony")}"
+        url = "#{Authy.api_uri}/protected/json/email/tony"
         response_json = {
           "message" => "User not found.",
           "success" => false,
@@ -371,7 +371,7 @@ describe "Authy::API" do
   describe "update user email" do
     context "user doesn't exist" do
       it "should not be ok" do
-        url = "#{Authy.api_uri}/protected/json/users/#{Authy::API.escape_for_url("tony")}/update"
+        url = "#{Authy.api_uri}/protected/json/users/tony/update"
         response_json = {
           "message" => "User not found.",
           "success" => false,
@@ -401,7 +401,7 @@ describe "Authy::API" do
           "message" => "User was updated successfully",
           "success" => true
         }.to_json
-        url = "#{Authy.api_uri}/protected/json/users/#{Authy::API.escape_for_url(user_id)}/update"
+        url = "#{Authy.api_uri}/protected/json/users/#{user_id}/update"
         new_email = generate_email
         expect(Authy::API.http_client).to receive(:request)
           .once
@@ -419,7 +419,7 @@ describe "Authy::API" do
   describe "delete users" do
     context "user doesn't exist" do
       it "should not be ok" do
-        url = "#{Authy.api_uri}/protected/json/users/delete/#{Authy::API.escape_for_url("tony")}"
+        url = "#{Authy.api_uri}/protected/json/users/delete/tony"
         response_json = {
           "message" => "User not found.",
           "success" => false,

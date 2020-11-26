@@ -30,10 +30,6 @@ module Authy
         [ true, ""]
       end
 
-      def escape_for_url(field)
-        URI.escape(field.to_s.strip, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
-      end
-
       def to_param(left, right)
         HTTP::Message.escape(left) + '=' +  HTTP::Message.escape(right.to_s)
       end

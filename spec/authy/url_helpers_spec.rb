@@ -5,18 +5,6 @@ describe "Authy::URL" do
     include Authy::URL
   end
 
-  describe "escape_for_url" do
-    it "should user URI escape" do
-      expect(URI).to receive :escape
-      Dummy.escape_for_url("that")
-    end
-
-    it "should use Regexp" do
-      expect(Regexp).to receive(:new).with("[^#{URI::PATTERN::UNRESERVED}]").and_return(/a/)
-      Dummy.escape_for_url("that")
-    end
-  end
-
   describe "to_param" do
     it "should user HTTP::Message.escape" do
       expect(HTTP::Message).to receive(:escape).exactly(2).times.and_return "basic string"
