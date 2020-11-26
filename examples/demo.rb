@@ -5,8 +5,8 @@ require 'sqlite3'
 require 'active_record'
 require 'highline/import' # gem install highline
 
-Authy.api_url = "http://sandbox-api.authy.com"
-Authy.api_key = "a1ffc30aa2d775c7ebebe45585727fe0"
+Authy.api_url = "https://api.authy.com"
+Authy.api_key = "[YOUR_API_KEY]"
 
 # setup db
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => "db")
