@@ -11,7 +11,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
   config.before(:suite) do
-    Authy.api_key = 'bf12974d70818a08199d17d5e2bae630'
+    Authy.api_key = 'valid_api_key'
   end
 
   def generate_email
