@@ -58,6 +58,10 @@ Rails users can put this in config/initializers and create a new file called `au
 
 [Legacy (V1) documentation here.](verify-legacy-v1.md) **Verify V1 is not recommended for new development. Please consider using [Verify V2](https://www.twilio.com/docs/verify/api)**.
 
+## Demo
+
+See the [`./examples`](./examples) directory for a demo CLI application that uses the Authy API.
+
 ## Contributing
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
