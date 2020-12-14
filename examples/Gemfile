@@ -1,0 +1,6 @@
+source "https://rubygems.org"
+
+gem "authy"
+gem "sqlite3"
+gem "activerecord"
+gem "highline"

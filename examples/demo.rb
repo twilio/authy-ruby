@@ -5,12 +5,11 @@ require 'sqlite3'
 require 'active_record'
 require 'highline/import' # gem install highline
 
-Authy.api_url = "http://sandbox-api.authy.com"
-Authy.api_key = "a1ffc30aa2d775c7ebebe45585727fe0"
+trap("SIGINT") { exit! }
 
 # setup db
 ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => "db")
-class AddUsers < ActiveRecord::Migration
+class AddUsers < ActiveRecord::Migration[6.0]
   def self.up
     create_table :users do |t|
       t.string :email
@@ -28,11 +27,15 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :email
 end
 
+api_key = ENV["AUTHY_API_KEY"] || ask("Enter your Authy API Key (won't be displayed): "){ |q| q.echo = false }
+
+Authy.api_url = "https://api.authy.com"
+Authy.api_key = api_key
 
 choose do |menu|
-  menu.prompt = "what do you want to do? "
+  menu.prompt = "What do you want to do? "
 
-  menu.choice(:register) do
+  menu.choice("Register a user") do
     loop do
       email = ask("email: ")
       country_code = ask("country code: ")
@@ -55,27 +58,7 @@ choose do |menu|
     end
   end
 
-  menu.choice(:login) do
-    email = ask("email: ")
-    token = ask("token: ")
-
-    user = User.where(:email => email).first
-    if !user
-      puts "User is not registered yet"
-      return
-    end
-
-    # verify if the given token is correct. `force` makes it validate the code even if the user has not confirmed its account
-    otp = Authy::API.verify(:id => user.authy_id, :token => token, :force => true)
-
-    if otp.ok?
-      puts "Welcome back!"
-    else
-      puts "Wrong email or token :("
-    end
-  end
-
-  menu.choice(:request_token) do
+  menu.choice("Request token") do
     email = ask("email: ")
 
     user = User.where(:email => email).first
@@ -92,6 +75,27 @@ choose do |menu|
       puts "Message was sent"
     else
       puts "Failed to send message: #{response.errors.inspect}"
+    end
+  end
+
+  menu.choice("Verify token") do
+    email = ask("email: ")
+
+    user = User.where(:email => email).first
+    if !user
+      puts "User is not registered yet"
+      return
+    end
+
+    token = ask("token: ")
+
+    # verify if the given token is correct. `force` makes it validate the code even if the user has not confirmed its account
+    otp = Authy::API.verify(:id => user.authy_id, :token => token, :force => true)
+
+    if otp.ok?
+      puts "Welcome back!"
+    else
+      puts "Wrong email or token :("
     end
   end
 end
