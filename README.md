@@ -73,4 +73,4 @@ See the [`./examples`](./examples) directory for a demo CLI application that use
 
 ## Copyright
 
-Copyright (c) 2011-2020 Authy Inc. See [LICENSE](https://github.com/twilio/authy-ruby/blob/master/LICENSE.txt) for further details.
+Copyright (c) 2011-2021 Authy Inc. See [LICENSE](https://github.com/twilio/authy-ruby/blob/master/LICENSE.txt) for further details.
