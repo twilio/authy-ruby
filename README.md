@@ -16,6 +16,7 @@ If you only need SMS and Voice support for one-time passwords, we recommend usin
 ### Authy Quickstart
 
 For a full tutorial, check out either of the Ruby Authy Quickstart in our docs:
+
 * [Ruby/Rails Authy Quickstart](https://www.twilio.com/docs/authy/quickstart/two-factor-authentication-ruby-rails)
 
 ## Authy Ruby Installation
@@ -70,6 +71,15 @@ See the [`./examples`](./examples) directory for a demo CLI application that use
 * Commit and push until you are happy with your contribution.
 * Add tests.
 * Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit.
+
+## Notice: Twilio Authy API’s Sandbox feature will stop working on Sep 30, 2021
+Twilio is discontinuing the Authy API’s Sandbox, a feature that allows customers to run continuous integration tests against a mock Authy API for free. The Sandbox is no longer being maintained, so we will be taking the final deprecation step of shutting it down on September 30, 2021. The rest of the Authy API product will continue working as-is.
+
+This repo previously used the sandbox API as part of the test suite, but that has been since removed.
+
+You will only be affected if you are using the sandbox API in your own application or test suite.
+
+For more information please read this article on [how we are discontinuing the Twilio Authy sandbox API](https://support.authy.com/hc/en-us/articles/1260803396889-Notice-Twilio-Authy-API-s-Sandbox-feature-will-stop-working-on-Sep-30-2021).
 
 ## Copyright
 
