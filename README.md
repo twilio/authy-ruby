@@ -1,5 +1,26 @@
 [![Gem Version](https://badge.fury.io/rb/authy.svg)](https://rubygems.org/gems/authy/) [![Build Status](https://github.com/twilio/authy-ruby/workflows/build/badge.svg)](https://github.com/twilio/authy-ruby/actions) [![Code Climate](https://codeclimate.com/github/authy/authy-ruby.png)](https://codeclimate.com/github/authy/authy-ruby)
 
+---
+
+🚨🚨🚨
+
+**This library is no longer actively maintained.** The Authy API has been replaced with the [Twilio Verify API](https://www.twilio.com/docs/verify). Twilio will support the Authy API through November 1, 2022 for SMS/Voice. After this date, we’ll start to deprecate the service for SMS/Voice. Any requests sent to the API after May 1, 2023, will automatically receive an error.  Push and TOTP will continue to be supported through July 2023.
+
+[Learn more about migrating from Authy to Verify.](https://www.twilio.com/blog/migrate-authy-to-verify)
+
+Please visit the Twilio Docs for:
+* [Verify + Ruby (Rails) quickstart](https://www.twilio.com/docs/verify/quickstarts/ruby-rails)
+* [Twilio Ruby helper library](https://www.twilio.com/docs/libraries/ruby)
+* [Verify API reference](https://www.twilio.com/docs/verify/api)
+
+Please direct any questions to [Twilio Support](https://support.twilio.com/hc/en-us). Thank you!
+
+🚨🚨🚨
+
+---
+
+
+
 # Ruby Client for Twilio Authy Two-Factor Authentication (2FA) API
 
 Documentation for Ruby usage of the Authy API lives in the [official Twilio documentation](https://www.twilio.com/docs/authy/api/).

@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Authy Inc"]
   s.email       = ["support@authy.com"]
   s.homepage    = "https://github.com/authy/authy-ruby"
-  s.summary     = %q{Ruby library to access Authy services}
-  s.description = %q{Ruby library to access Authy services}
+  s.summary     = %q{Deprecated: please see README for details}
+  s.description = %q{Ruby library to access Authy services. This gem is deprecated, please see the README for details.}
   s.license = 'MIT'
 
   s.files         = `git ls-files`.split("\n")

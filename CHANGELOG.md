@@ -1,6 +1,9 @@
 # Changelog for `Authy`
 
-## Ongoing [☰](https://github.com/twilio/authy-ruby/compare/v3.0.0...master)
+## Ongoing [☰](https://github.com/twilio/authy-ruby/compare/v3.0.0...master)\
+
+* Major updates
+  * Added deprecation notices
 
 ## 3.0.0 (14 December, 2020) [☰](https://github.com/twilio/authy-ruby/compare/v2.7.5...v3.0.0)
 
