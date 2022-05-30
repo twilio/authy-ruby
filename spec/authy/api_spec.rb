@@ -337,7 +337,7 @@ describe "Authy::API" do
 
       expect(Authy::API.http_client).to receive(:request)
         .once
-        .with(:post, url, body: "", header: headers)
+        .with(:post, url, { body: "", header: headers })
         .and_return(double(ok?: true, body: response_json, status: 200))
       response = Authy::API.request_email(id: user_id)
       expect(response).to be_ok
@@ -405,9 +405,12 @@ describe "Authy::API" do
         new_email = generate_email
         expect(Authy::API.http_client).to receive(:request)
           .once
-          .with(:post, url, body: Utils.escape_query({
-            email: new_email
-          }), header: headers)
+          .with(:post, url, {
+            body: Utils.escape_query({
+              email: new_email
+            }),
+            header: headers
+          })
           .and_return(double(ok?: true, body: response_json, status: 200))
         response = Authy::API.update_user(id: user_id, email: new_email)
         expect(response.message).to eq "User was updated successfully"
