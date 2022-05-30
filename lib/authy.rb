@@ -12,3 +12,5 @@ require 'authy/config'
 require 'authy/api'
 require 'authy/phone_verification'
 require 'authy/onetouch'
+
+warn "DEPRECATION WARNING: The authy-ruby library is no longer actively maintained. The Authy API is being replaced by the Twilio Verify API. Please see the README for more details."
